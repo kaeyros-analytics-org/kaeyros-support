@@ -1,0 +1,238 @@
+/*///////////////////////////////////// police/////////////////////////////////////////////////////////////////////////////////// */
+
+body{
+  font-family: "Archivo Narrow", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+}
+
+
+/*/===================================================================================================================================
+                                                  dashboad                                                                  
+=======================================================================================================================================*/
+body{
+    margin: 0px;
+}
+header{
+
+    height: 81px;
+    width: 100%;
+}
+.big-section{
+    display: flex;
+    justify-content: space-between; 
+    height: 100vh;
+ } 
+
+.focuss:focus{
+    outline: none;
+    border-color: #FF5F00;
+}
+
+.section-1{
+    background-color: rgb(243,245,247);
+    min-height: 111%;
+    /* position: fixed;  */
+}
+
+
+
+#message{
+    border: 1px solid rgb(189, 187, 187);
+    height: 100px;
+    width: 95%;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 20px 20px 20px 30px;
+}
+.asid-contacts{
+    padding: 40px 40px 40px 40px;
+
+}
+.asid-contat{
+    padding: 0px 40px 40px 20px;
+
+}
+.image{
+    width: 20px;
+    height: 20px;
+}
+.logo {
+    display: flex;
+    justify-content: center;
+    width: 250px;
+    align-items: center;
+    
+}
+.logo-img {
+    max-width: 50px;
+}
+.sect{ 
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    overflow-y: scroll;
+
+}
+
+.section-2{
+    width: 100%;
+    min-height: 100vh;
+}
+input{
+    height: 40px;
+    width: 100%;
+    padding: 10px 0px 10px 15px;
+    border-radius: 10px;
+    border: 1px solid rgb(189, 187, 187);
+    font-size: 16px;
+
+}
+.incidents{
+    width: 100%;
+}
+.creat-tick{
+    display: flex;
+    justify-content: start;
+    padding: 0px 0px 0px 80px;
+    width:30%;
+    min-height: 100vh;
+}
+.radio {
+    display: flex;
+    align-items: center;
+    gap:5px;
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid rgb(189, 187, 187);
+}
+input[type=radio] {
+    border: 0px;
+    width: 15px;
+    margin: 0;
+    height: 1em;
+    cursor: pointer;
+}
+h2{
+    margin: 25px 0px 5px 0px ;
+}
+b{
+    font-size: 20px;
+}
+.selecte{
+    width: 107%;
+    height: 70px;
+    border-radius: 10px;
+    border: 1px solid rgb(189, 187, 187);
+    font-size: 16px;
+    padding: 0px 20px ;
+
+}
+div.priorities {
+    width: 100%;
+}
+.flex{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap:10px;
+}
+.flexs{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+}
+
+.bouton, .titre{
+    margin-top: 25px;
+
+}
+button{
+    width: 107%;
+    height: 70px;
+    border: none;
+    border-radius: 10px;
+}
+.bouton button{
+    background-color: #0F2A97;
+    color: white;
+    font-size: 20px;
+}
+.notification{
+    width: 70%;
+    padding: 40px 60px 0px 100px;
+    height: 100vh;
+}
+
+.box-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgb(189, 187, 187);
+    height: 10px;
+    background-color: rgb(189, 187, 187);
+    padding: 30px 20px;
+    font-size: 18px;
+    color:rgb(87, 82, 82);
+    border-radius: 10px;
+}
+
+.titre h1{
+    font-size: 40px;
+    margin: 0;
+    color: #FF5F00;
+}
+form{
+    width: 100%;
+}
+
+/* =================tableau================================ */
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    
+}
+
+.users-table th, .users-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.users-table th {
+    background-color:#0F2A97;
+    color: white;
+}
+
+.users-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.users-table tbody tr:hover {
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+
+
+@media screen and (max-width:500px) {
+
+    .section-1{
+        display: none;
+    }
+    .section-2{
+        display: block;
+
+    }
+    
+}
