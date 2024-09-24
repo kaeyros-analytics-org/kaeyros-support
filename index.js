@@ -13,7 +13,7 @@ app.use('/api/tickets', ticketsRoutes);
 app.use('/api/customers', customersRoutes);
 
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = 3000;
 app.listen(PORT, () => {
