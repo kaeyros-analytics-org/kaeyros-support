@@ -40,8 +40,10 @@
 
         <section class="section-2">
             <header>
+            <div class="logout">
+                <button class="boutonn" type="submit"><a href="./login.html">Logout</a></button>
+            </div>
             </header>
-            <hr>
             <div class="sect">
                 <div class="creat-tick">
                     <form id="ticketForm">
@@ -50,11 +52,11 @@
                         </div>
                         <div>
                             <label for="projet"><h2>Projet</h2></label>
-                            <input type="text" class="focuss" name="projet" id="projet" placeholder="Which project has a problem">
-                        </div><br>
+                            <input type="text" class="focuss" name="projet" id="projet" placeholder="Which project has a problem" required >
+                        </div>
                         <div>
                             <label for="name-ticket"><h2>Subject</h2></label>
-                            <input type="text" class="focuss" id="name-ticket" placeholder="What is the difficulty">
+                            <input type="text" class="focuss" id="name-ticket" placeholder="What is the difficulty"required>
                         </div>
                         <div class="priorities">
                             <h2>Priority</h2>
@@ -76,43 +78,42 @@
                         <div class="incident">
                             <div class="incidents"><h2>Ticket Type</h2></div>
                             <div>
-                                <select name="ticketType" id="cars" class="selecte focuss">
-                                    <option value="Incident">Incident</option>
-                                    <option value="Problem">Problem</option>
-                                    <option value="Question">Question</option>
-                                    <option value="Suggestion">Suggestion</option>
+                                <select name="ticketType" id="cars" class="selecte focuss"required >
+                                    <option class=" option-select" value="Incident"> Incidents</option>
+                                    <option class=" option-select" value="Problem">Problem</option>
+                                    <option  class=" option-select" value="Question">Question</option>
+                                    <option  class=" option-select"value="Suggestion">Suggestion</option>
                                 </select>
                             </div>
                         </div>
                         <div class="tag">
                             <div><h2>Description</h2></div>
                             <div>
-                                <textarea name="message" class="focuss" id="message" placeholder="Enter your message"></textarea>
+                                <textarea name="message" class="focuss" id="message" placeholder="Enter your message"required ></textarea>
                             </div>
                         </div>
-                        <div class="bouton">
-                            <button type="submit">Envoyer</button>
+                        <div >
+                            <button class="bouton"type="submit">Envoyer</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="notification">
-                    <div class="box-container">
+                    <div class=" box-container">
                         <div class="box">TICKETS: <span id="ticketCount">0</span></div>
                         <div class="box">TICKET ALREADY OPEN: 0</div>
                         <div class="box">TICKET ALREADY PROCESSED: 0</div>
                     </div>
                     <div class="prizesTableContainer" id="prizesTableContainer">
-                        <h3 id="prizesListTitle" style="display: none;">Prizes List:</h3>
                         <table class="users-table" id="prizesTable">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Projet</th>
-                                    <th>Subject</th>
-                                    <th>Priority</th>
-                                    <th>Ticket Type</th>
-                                    <th>date</th>
+                                    <th class="id">Id</th>
+                                    <th class="projet">Projet</th>
+                                    <th class="subject">Subject</th>
+                                    <th class="priorit">Priority</th>
+                                    <th class="type">Ticket Type</th>
+                                    <th class="date">date</th>
                                 </tr>
                             </thead>
                             <tbody>

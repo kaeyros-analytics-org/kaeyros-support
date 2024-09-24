@@ -14,14 +14,19 @@ body{
 body{
     margin: 0px;
 }
+a{
+    text-decoration: none;
+    color: white;
+}
 header{
-
+    padding-top: 10px;
     height: 81px;
     width: 100%;
 }
 .big-section{
     display: flex;
     justify-content: space-between; 
+    /* gap: 50px; */
     height: 100vh;
  } 
 
@@ -41,7 +46,7 @@ header{
 #message{
     border: 1px solid rgb(189, 187, 187);
     height: 100px;
-    width: 95%;
+    width: 90%;
     font-size: 16px;
     border-radius: 10px;
     padding: 20px 20px 20px 30px;
@@ -71,33 +76,39 @@ header{
 .sect{ 
     display: flex;
     justify-content: space-between;
-    height: 100%;
+}
+.prizesTableContainer{
     overflow-y: scroll;
-
+    height: 80%;
 }
 
 .section-2{
     width: 100%;
+    overflow-y: scroll;
     min-height: 100vh;
+}
+hr{
+    margin: 0px;
 }
 input{
     height: 40px;
-    width: 100%;
+    width: 97%;
     padding: 10px 0px 10px 15px;
     border-radius: 10px;
     border: 1px solid rgb(189, 187, 187);
     font-size: 16px;
 
 }
-.incidents{
-    width: 100%;
-}
+
 .creat-tick{
     display: flex;
     justify-content: start;
-    padding: 0px 0px 0px 80px;
-    width:30%;
-    min-height: 100vh;
+    margin: 0px 0px 0px 60px;
+    padding: 20px 30px 0px 30px;
+    background-color: rgb(243,245,247);
+    width:40%;
+    height:100%;
+    border-radius: 15px;
 }
 .radio {
     display: flex;
@@ -123,15 +134,24 @@ h2{
 b{
     font-size: 20px;
 }
-.selecte{
-    width: 107%;
-    height: 70px;
+.selecte {
+    width: 100%;
     border-radius: 10px;
     border: 1px solid rgb(189, 187, 187);
     font-size: 16px;
-    padding: 0px 20px ;
-
+    padding: 20px 20px ;
 }
+
+ .option-select{
+    font-size: 20px;
+    appearance: none;
+    display: block;
+    line-height: 25px;
+    background-color: rgb(243,245,247);
+    margin: 20px;
+  }
+
+
 div.priorities {
     width: 100%;
 }
@@ -153,20 +173,28 @@ div.priorities {
     margin-top: 25px;
 
 }
-button{
-    width: 107%;
+.boutonn{
+    width: 10%;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f80e06;
+    color: white;
+    font-size: 20px;
+
+}
+.bouton{
+    width: 100%;
     height: 70px;
     border: none;
     border-radius: 10px;
-}
-.bouton button{
     background-color: #0F2A97;
     color: white;
     font-size: 20px;
 }
 .notification{
-    width: 70%;
-    padding: 40px 60px 0px 100px;
+    width: 60%;
+    padding: 0px 60px 0px 50px;
     height: 100vh;
 }
 
@@ -174,13 +202,13 @@ button{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgb(189, 187, 187);
-    height: 10px;
-    background-color: rgb(189, 187, 187);
+    height: 20px;
+    background-color: rgb(243,245,247);
     padding: 30px 20px;
+    margin-bottom: 30px;
     font-size: 18px;
     color:rgb(87, 82, 82);
-    border-radius: 10px;
+    border-radius: 15px;
 }
 
 .titre h1{
@@ -223,7 +251,18 @@ form{
     cursor: pointer;
 }
 
+/* ------------------------------------------------------------------------------------------------------------------------- */
 
+
+.priorit,.projet, .type, .date, .id{
+    width: 70px;
+}
+
+.logout{
+    display: flex;
+    justify-content: end;
+    padding: 10px;
+}
 
 @media screen and (max-width:500px) {
 
