@@ -46,7 +46,7 @@ router.get('/all', authenticate, (req, res) => {
   }
 });
 
-// Get a specific ticket by ID (admin has access to all)
+// Get ticket by ID (admin has access to all)
 router.get('/:id', authenticate, (req, res) => {
   const ticketId = req.params.id;
   const customer_id = req.customer_id;
@@ -69,7 +69,7 @@ router.get('/:id', authenticate, (req, res) => {
   });
 });
 
-// Update a ticket (users can only update their own tickets)
+// Update ticket (users can only update their own tickets)
 router.put('/:id', authenticate, (req, res) => {
   const ticketId = req.params.id;
   const customer_id = req.customer_id;
@@ -111,5 +111,25 @@ router.delete('/:id', authenticate, (req, res) => {
     res.status(200).json({ msg: 'Ticket deleted successfully.' });
   });
 });
+
+
+
+// Send a message
+router.post('/message', authenticate, (req, res) => {
+  const { sender, response, image} = req.body;
+
+  const query = `
+    INSERT INTO responses (ticket_id, sender, response, image)
+    VALUES (?, ?, ?, ?)
+  `;
+  db.query(query, [ticket_id, sender, response, image], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: '' });
+    }
+    res.status(201).json({ msg: '', ticketId: result.insertId });
+  });
+});
+
 
 module.exports = router;

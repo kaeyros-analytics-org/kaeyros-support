@@ -1,52 +1,79 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const ticketForm = document.getElementById('ticketForm');
-    const tableBody = document.getElementById('prizesTable').getElementsByTagName('tbody')[0];
+//create a new ticket
+const form = document.getElementById('ticketForm');
 
-    // Charger les données à partir du localStorage lors du chargement de la page
-    const savedTickets = JSON.parse(localStorage.getItem('tickets')) || [];
-    savedTickets.forEach(ticket => {
-        addRowToTable(ticket);
+form.addEventListener('submit', async (event) => {
+  event.preventDefault(); 
+
+  const project = document.getElementById('project').value;
+  const subject = document.getElementById('subject').value;
+  const priority = document.getElementById('priority').value;
+  const type = document.getElementById('type').value;
+  const description = document.getElementById('description').value;
+
+
+    const response = await fetch('api/tickets/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ project, subject, priority, type, description })
     });
 
-    ticketForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Empêche le rechargement de la page
-
-        // Récupérer les valeurs des champs
-        const projet = document.getElementById('projet').value;
-        const subject = document.getElementById('name-ticket').value;
-        const priority = document.querySelector('input[name="priority"]:checked') ? document.querySelector('input[name="priority"]:checked').value : 'None';
-        const ticketType = document.getElementById('cars').value;
-
-        // Générer la date actuelle (format : YYYY-MM-DD)
-        const today = new Date();
-        const date = today.toISOString().slice(0, 10);
-
-        const newTicket = { projet, subject, priority, ticketType, date };
-
-        // Ajouter les informations dans le tableau
-        addRowToTable(newTicket);
-        
-        // Enregistrer le nouveau ticket dans localStorage
-        savedTickets.push(newTicket);
-        localStorage.setItem('tickets', JSON.stringify(savedTickets));
-
-        // Réinitialiser le formulaire
-        this.reset();
-    });
-
-    function addRowToTable(ticket) {
-        const newRow = tableBody.insertRow();
-        newRow.innerHTML = `
-            <td>${tableBody.rows.length + 1}</td>
-            <td>${ticket.projet}</td>
-            <td>${ticket.subject}</td>
-            <td>${ticket.priority}</td>
-            <td>${ticket.ticketType}</td>
-            <td>${ticket.date}</td>
-            `
-        ;
-
-        // Mettre à jour le nombre de tickets
-        document.getElementById('ticketCount').textContent = tableBody.rows.length;
-    }
+    if (response.ok) {
+      alert('Ticket created successfully!');
+  } else {
+      const result = await response.json();
+      alert('Ticket creation failed: ' + result.msg); 
+  }
+  
 });
+
+
+
+
+
+
+async function fetchTickets() {
+    try {
+        const response = await fetch("http://localhost:3000/api/tickets/all");
+        
+        if (!response.ok) {
+            throw new Error('Not ok');
+        }
+
+        const tickets = await response.json();
+        console.log("Fetched tickets:", tickets);
+
+        const tableBody = document.querySelector(".tickets-table tbody");
+        tableBody.innerHTML = "";
+
+        tickets.forEach(ticket => {
+            const row = document.createElement("tr");
+
+            const createCell = (text) => {
+                const cell = document.createElement("td");
+                cell.textContent = text;
+                return cell;
+            };
+
+            row.appendChild(createCell(ticket.name));
+            row.appendChild(createCell(ticket.project));
+            row.appendChild(createCell(ticket.subject));
+            row.appendChild(createCell(ticket.priority));
+            row.appendChild(createCell(ticket.type));
+            row.appendChild(createCell(ticket.status));
+            row.appendChild(createCell(ticket.created_at));
+
+
+            tableBody.appendChild(row);
+
+            document.getElementById('ticketCount').textContent = tableBody.rows.length;
+        });
+    } catch (error) {
+        console.error("Error fetching tickets:", error);
+        alert("Une erreur s'est produite lors de la récupération des tickets.");
+    }
+}
+
+
+fetchTickets();

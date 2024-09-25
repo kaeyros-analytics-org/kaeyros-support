@@ -12,7 +12,7 @@ function authenticate(req, res, next) {
     const decoded = jwt.verify(token, 'your_jwt_secret');
     req.customer_id = decoded.id;
 
-    //Check role
+    // role
     db.query('SELECT role FROM customers WHERE id = ?', [req.customer_id], (err, results) => {
       if (err) {
         console.error(err);

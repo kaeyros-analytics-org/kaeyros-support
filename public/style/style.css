@@ -163,6 +163,7 @@ button{
     background-color: #0F2A97;
     color: white;
     font-size: 20px;
+    cursor: pointer;
 }
 .notification{
     width: 70%;

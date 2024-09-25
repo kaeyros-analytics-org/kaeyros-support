@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ msg: 'Email already registered.' });
     }
 
-   //password
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -35,7 +35,8 @@ router.post('/register', async (req, res) => {
   });
 });
 
-// Customer login
+
+// Login
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -60,6 +61,7 @@ router.post('/login', (req, res) => {
   });
 });
 
+
 // Get all customers (admin-only)
 router.get('/all', authenticate, (req, res) => {
   if (req.role !== 'admin') {
@@ -82,14 +84,7 @@ router.get('/all', authenticate, (req, res) => {
   });
 });
 
-// Admin Dashboard if dannick does an admin dashboard (admin-only)
-router.get('/admin-dashboard', authenticate, (req, res) => {
-  if (req.role === 'admin') {
-    res.send('Welcome, Admin! You have access to the admin dashboard.');
-  } else {
-    res.status(403).json({ msg: 'Access forbidden.' });
-  }
-});
+
 
 // Update a customer (admin-only)
 router.put('/:id', authenticate, (req, res) => {
@@ -110,6 +105,8 @@ router.put('/:id', authenticate, (req, res) => {
   });
 });
 
+
+
 // Delete a customer (admin-only)
 router.delete('/:id', authenticate, (req, res) => {
   if (req.role !== 'admin') {
@@ -126,6 +123,16 @@ router.delete('/:id', authenticate, (req, res) => {
     }
     res.status(200).json({ msg: 'Customer deleted successfully.' });
   });
+});
+
+
+// Admin Dashboard if dannick does an admin dashboard
+router.get('/admin-dashboard', authenticate, (req, res) => {
+  if (req.role === 'admin') {
+    res.send('Welcome, Admin! You have access to the admin dashboard.');
+  } else {
+    res.status(403).json({ msg: 'Access forbidden.' });
+  }
 });
 
 module.exports = router;
