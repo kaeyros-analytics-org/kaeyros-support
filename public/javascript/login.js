@@ -6,7 +6,7 @@ form.addEventListener('submit', async (event) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    const response = await fetch('api/customers/login', {
+    const response = await fetch('/api/customers/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -14,11 +14,11 @@ form.addEventListener('submit', async (event) => {
         body: JSON.stringify({ email, password })
     });
 
-    
-
     const result = await response.json();
+
     if (response.ok) {
         alert('Login successful!');
+        localStorage.setItem('token', result.token);  
         window.location.href = 'home.html';
     } else {
         alert('Login failed: ' + result.message);
