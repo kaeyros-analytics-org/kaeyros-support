@@ -41,6 +41,8 @@
         <section class="section-2">
             <header>
                 <div class="logout">
+         <button class="customersBtn" id="customersBtn" type="submit">See all customers</button>
+         <button class="ticketsBtn" id="ticketsBtn" type="submit" style="display: none;">See all tickets</button>
                     <button class="boutonn" type="submit"><a href="./index.html">Logout</a></button>
                     </div>
             </header>
@@ -53,7 +55,7 @@
                             <h1><span style="color: rgb(87, 86, 86); font-size: 30px;" >Create a new ticket</span></h1>
                         </div>
                         <div>
-                            <label for="projet"><h2>Projet</h2></label>
+                            <label for="project"><h2>Project</h2></label>
                             <input type="text" class="focuss" name="project" id="project" placeholder="Which project has a problem">
                         </div><br>
                         <div>
@@ -98,16 +100,63 @@
                             <button class="bouton"type="submit" id="submitBtn">Envoyer</button>
                         </div>
                     </form>
+
+
+                    <form id="customerForm" action="/register" method="POST">
+                        <div class="titre">
+                            <h1>Kaeyros <span style="color:#0F2A97;">Support</span></h1><br>
+                            <h1><span style="color: rgb(87, 86, 86); font-size: 30px;" >Register a new user</span></h1>
+                        </div>
+                        <div>
+                        <label for="name"><h2>Name</h2></label>
+                        <input type="text" class="focuss" name="name" id="name" placeholder="veiller saisire le nom du client">
+                        </div>
+                        <div>
+                        <label for="email"><h2>Email</h2></label>
+                        <input type="email" class="focuss" name="email" id="email" placeholder="veillez saisire le mail du client">
+                        </div>
+                        
+                        <div>
+                        <label for="password"><h2>Password</h2></label>
+                        <input type="password" class="focuss" name="password" id="password" placeholder="Entrez le Password d'utilisateur">
+                        </div>
+                        <div>
+                        <label for="phone-number"><h2>Phone Number</h2></label>
+                        <input type="number" class="focuss" name="phone_number" id="phone_number" placeholder="Entrez le numero de telephone du client">
+                        </div>
+                        
+                        
+                        <div class="incident">
+                        <div class="incidents"><h2>project</h2></div>
+                        <div>
+                        <select name="project" id="project1" class="selecte focuss">
+                        <option value="SEMA"> SEMA</option>
+                        <option value="SWIVY">SWIVY</option>
+                        <option value="AIR-O">AIR-O</option>
+                        <option value="K-SHAP">K-SHAP</option>
+                        <option value="INVY">INVY</option>
+                        <option value="VAANAH">VAANAH</option>
+                        </select>
+                        </div>
+                        </div>
+                        
+                        <div >
+                        <button class="bouton" type="submit" id="submitBtn">create user</button>
+                        </div>
+                        </form>
                 </div>
+
+                   
+                     
                 
 
                 <div class="notification">
-                    <div class="box-container">
+                    <div class="box-container" id="boxContainer">
                         <div class="box">TICKETS: <span id="ticketCount">0</span></div>
                         <div class="box">TICKET ALREADY OPEN: <span id="openTicketCount">0</span></div>
                         <div class="box">TICKET ALREADY PROCESSED: <span id="processedTicketCount">0</span></div>
                     </div>
-                    <div class="ticketsTableContainer" id="ticketsTableContainer">
+                    <div class="ticketsTableContainer" id="ticketsTableContainer" style="display: block;">
                         <h3 id="ticketsListTitle" style="display: none;">Tickets List:</h3>
                         <table class="tickets-table" id="ticketsTable">
                             <thead>
@@ -135,20 +184,145 @@
                             
                             <div class="selects">
                             <div class="recup-id-subjec">
+                            <div class="ID">
+                            <strong id="ID">#SEMA2024 </strong><strong id="sujet"> probleme sur la console</strong>
+                            </div>
+                            <div>
+                            <button type="submit" class="open"> open</button>
+                            </div>
                             </div>
                             <div class="type-priority">
                             <div class="recup-type-priority recup-type-priority-1">
                             <div class="base">
-                            <p>Ticket Type</p>
+                            <p><strong>Ticket Type</strong></p>
                             </div>
                             <div class="boss1">
+                            <p>Incident</p>
                             </div>
                             </div>
                             <div class="recup-type-priority recup-type-priority-2">
                             <div class="base">
-                            <p>Priority</p>
+                            <p><strong>Priority</strong></p>
                             </div>
                             <div class="boss">
+                            <p>Medium</p>
+                            </div>
+                            </div>
+                            </div>
+                            <div>
+                            <div><p></p></div>
+                            </div>
+                            </div>
+                            
+                            <div>
+                            <h1> Ticket Activity</h1>
+                            <div class="accordion-container">
+                            <div class="accordion">
+                            <p>Ticket Created Kaeyros Contacted for the first time</p>
+                            <img src="../public/image/arrow.jpg" class="arrow">
+                            </div>
+                            <div class="panel">
+                            <p>Création de solutions sur mesure qui répondent àvos défis commerciaux et enjeux uniques de gestion.De l’aide à la prise de décision à la transformation des processus, nous mettons à profit notre expertise pour jouer avec vos données.</p>
+                            </div>
+                            
+                            <div class="accordion">
+                            <p>Expertise personnalisée</p>
+                            <img src="../public/image/arrow.jpg" class="arrow">
+                            </div>
+                            <div class="panel">
+                            <p>Création de solutions sur mesure qui répondent àvos défis commerciaux et enjeux uniques de gestion.De l’aide à la prise de décision à la transformation des processus, nous mettons à profit notre expertise pour jouer avec vos données.</p>
+                            </div>
+                            
+                            <div class="accordion">
+                            <p>Expertise personnalisée</p>
+                            <img src="../public/image/arrow.jpg" class="arrow">
+                            </div>
+                             
+                            <div class="panel">
+                            <p>Création de solutions sur mesure qui répondent àvos défis commerciaux et enjeux uniques de gestion.De l’aide à la prise de décision à la transformation des processus, nous mettons à profit notre expertise pour jouer avec vos données.</p>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="task-container">
+                            <div class="task-header">
+                            <h2 class="task-title">2 Upcoming Task</h2>
+                            <button class="add-task-button">+ Add New Task</button>
+                            </div>
+                             
+                            <div class="task">
+                            <input type="checkbox"/>
+                            <div>
+                            <div class="task-description">
+                            Validate that the problem has been resolved or the requested task has been completed successfully.
+                            </div>
+                            <div class="task-due-date">
+                            Due date 14 Dec 2023
+                            </div>
+                            </div>
+                            </div>
+                             
+                            <div class="task">
+                            <input type="checkbox"/>
+                            <div>
+                            <div class="task-description">
+                            Schedule a call if article don't help
+                            </div>
+                            <div class="task-due-date">
+                            Due date 14 Dec 2023
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="ticket-footer">
+                            TICKET 192 HAS BEEN UPDATED
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="customersTableContainer" id="customersTableContainer" style="display: none;">
+                        <h3 id="customersListTitle" style="display: block;">Customers List:</h3>
+                        <table class="customers-table" id="customersTable">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Project</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
+                                    <th>Creation date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- customers data will be appended here -->
+                            </tbody>
+                        </table>
+                        <div id="myModal2" class="modal">
+                            <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <div class="ticket-preview">
+                            <div class="ticket-header">
+                            <h2>Customer Preview</h2>
+                            <button>View Full Details</button>
+                            </div>
+                            
+                            <div class="selects">
+                            <div class="recup-id-subjec" id="recup-id-subjec2">
+                            </div>
+                            <div class="type-priority">
+                            <div class="recup-type-priority recup-type-priority-1">
+                            <div class="base">
+                            <p>Name</p>
+                            </div>
+                            <div class="boss1" id="boss12">
+                            </div>
+                            </div>
+                            <div class="recup-type-priority recup-type-priority-2">
+                            <div class="base">
+                            <p>project</p>
+                            </div>
+                            <div class="boss" id="boss2">
                             </div>
                             </div>
                             <div>
@@ -156,6 +330,8 @@
                             </div>
                             </div>
                             </div>
+
+            <button class="deleteBtn" id="deleteCustomersBtn" type="submit">Delete customer</button>
                              
                             <div class="ticket-footer">
                             TICKET 192 HAS BEEN UPDATED
@@ -164,10 +340,14 @@
                             </div>
                             </div>
                     </div>
+
                 </div>
+
             </div>
+
         </section>
     </section>
+
 <script src="../javascript/script.js"></script>
 </body>
 </html>

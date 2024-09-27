@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('../Database/db');
 const authenticate = require('../middleware/auth');
 
-// Create a new ticket
 router.post('/create', authenticate, (req, res) => {
   const { project, subject, type, description, priority } = req.body;
   const customer_id = req.customer_id;
@@ -12,18 +11,37 @@ router.post('/create', authenticate, (req, res) => {
     return res.status(400).json({ msg: 'Please fill all fields.' });
   }
 
-  const query = `
-    INSERT INTO tickets (customer_id, project, subject, type, description, priority)
-    VALUES (?, ?, ?, ?, ?, ?)
+  // Get the count of tickets for this project to generate the custom ticket ID
+  const countQuery = `
+    SELECT COUNT(*) as count FROM tickets WHERE project = ?
   `;
-  db.query(query, [customer_id, project, subject, type, description, priority], (err, result) => {
+  db.query(countQuery, [project], (err, result) => {
     if (err) {
-      console.error(err);
+      console.error('Error counting tickets:', err);
       return res.status(500).json({ error: 'Failed to create ticket.' });
     }
-    res.status(201).json({ msg: 'Ticket created successfully.', ticketId: result.insertId });
+
+    const ticketCount = result[0].count + 1;  // Get the ticket count + 1 for new ticket
+    const formattedTicketId = `${project}#${String(ticketCount).padStart(4, '0')}`; // Generate ID like "ProjectName#000X"
+
+    console.log('Generated Ticket ID:', formattedTicketId);  // Log the generated ID
+
+    const insertQuery = `
+      INSERT INTO tickets (customer_id, project, subject, type, description, priority, ticket_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    db.query(insertQuery, [customer_id, project, subject, type, description, priority, formattedTicketId], (err, result) => {
+      if (err) {
+        console.error('Error inserting ticket:', err);
+        return res.status(500).json({ error: 'Failed to create ticket.' });
+      }
+      console.log('Ticket created successfully with ID:', formattedTicketId);  // Log successful insertion
+      res.status(201).json({ msg: 'Ticket created successfully.', ticketId: formattedTicketId });
+    });
   });
 });
+
+
 
 // Get all tickets (admin can see all, normal users can only see their own)
 router.get('/all', authenticate, (req, res) => {
@@ -114,22 +132,45 @@ router.delete('/:id', authenticate, (req, res) => {
 
 
 
-// Send a message
-router.post('/message', authenticate, (req, res) => {
-  const { sender, response, image} = req.body;
+// POST endpoint to create a response for a specific ticket
+router.post('/:ticketId/responses', authenticate, (req, res) => {
+  const { response, images } = req.body;
+  const ticket_id = req.params.ticketId;
+  const sender = req.role === 'admin' ? 'admin' : 'user';
+
+  if (!response) {
+      return res.status(400).json({ msg: 'Response cannot be empty.' });
+  }
 
   const query = `
-    INSERT INTO responses (ticket_id, sender, response, image)
-    VALUES (?, ?, ?, ?)
+      INSERT INTO responses (ticket_id, sender, response, images)
+      VALUES (?, ?, ?, ?)
   `;
-  db.query(query, [ticket_id, sender, response, image], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: '' });
-    }
-    res.status(201).json({ msg: '', ticketId: result.insertId });
+  db.query(query, [ticket_id, sender, response, images || null], (err, result) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Failed to send response.' });
+      }
+      res.status(201).json({ msg: 'Response sent successfully.' });
   });
 });
+
+// GET endpoint to retrieve all responses for a specific ticket
+router.get('/:ticketId/responses', authenticate, (req, res) => {
+  const ticket_id = req.params.ticketId;
+
+  const query = `
+      SELECT * FROM responses WHERE ticket_id = ?
+  `;
+  db.query(query, [ticket_id], (err, results) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Failed to retrieve responses.' });
+      }
+      res.status(200).json(results);
+  });
+});
+
 
 
 module.exports = router;

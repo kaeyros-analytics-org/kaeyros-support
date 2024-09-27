@@ -7,10 +7,10 @@ const authenticate = require('../middleware/auth');
 
 // Register new customer
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, phone_number, project, password } = req.body;
 
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ msg: 'Please enter all fields.' });
+  if (!name || !email || !phone_number || !password) {
+    return res.status(400).json({ msg: 'Please fill all the fields.' });
   }
 
   // Check email
@@ -24,8 +24,8 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const insertQuery = 'INSERT INTO customers (name, email, password, role) VALUES (?, ?, ?, ?)';
-    db.query(insertQuery, [name, email, hashedPassword, role], (err, result) => {
+    const insertQuery = 'INSERT INTO customers (name, email, phone_number, project, password) VALUES (?, ?, ?, ?, ?)';
+    db.query(insertQuery, [name, email, phone_number, project, hashedPassword], (err, result) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: 'Failed to register customer.' });
@@ -68,7 +68,7 @@ router.get('/all', authenticate, (req, res) => {
     return res.status(403).json({ msg: 'Access refused. Admins only.' });
   }
 
-  const getAllCustomersQuery = 'SELECT id, name, email, role FROM customers';
+  const getAllCustomersQuery = 'SELECT id, name, email, phone_number, project, role FROM customers';
   
   db.query(getAllCustomersQuery, (err, results) => {
     if (err) {
@@ -93,10 +93,10 @@ router.put('/:id', authenticate, (req, res) => {
   }
 
   const customerId = req.params.id;
-  const { name, email, role } = req.body;
+  const { name, email, phone_number, project, role } = req.body;
 
-  const updateQuery = 'UPDATE customers SET name = ?, email = ?, role = ? WHERE id = ?';
-  db.query(updateQuery, [name, email, role, customerId], (err, result) => {
+  const updateQuery = 'UPDATE customers SET name = ?, email = ?, phone_number = ?, project = ?, role = ? WHERE id = ?';
+  db.query(updateQuery, [name, email, phone_number, project, role, customerId], (err, result) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ msg: 'Failed to update customer.' });
@@ -126,13 +126,18 @@ router.delete('/:id', authenticate, (req, res) => {
 });
 
 
-// Admin Dashboard if dannick does an admin dashboard
-router.get('/admin-dashboard', authenticate, (req, res) => {
-  if (req.role === 'admin') {
-    res.send('Welcome, Admin! You have access to the admin dashboard.');
-  } else {
-    res.status(403).json({ msg: 'Access forbidden.' });
+// Get user role
+router.get('/get-role', authenticate, (req, res) => {
+  const customerId = req.customer_id;
+  const role = req.role;  // This is also set by the authenticate middleware
+
+  if (!customerId) {
+    return res.status(401).json({ msg: 'User not authenticated.' });
   }
+
+  // Return the role in the response
+  res.status(200).json({ role });
 });
+
 
 module.exports = router;
