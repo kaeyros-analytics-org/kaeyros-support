@@ -68,7 +68,7 @@ router.get('/all', authenticate, (req, res) => {
     return res.status(403).json({ msg: 'Access refused. Admins only.' });
   }
 
-  const getAllCustomersQuery = 'SELECT id, name, email, phone_number, project, role FROM customers';
+  const getAllCustomersQuery = 'SELECT id, name, email, phone_number, project, created_at, role FROM customers';
   
   db.query(getAllCustomersQuery, (err, results) => {
     if (err) {
@@ -121,6 +121,11 @@ router.delete('/:id', authenticate, (req, res) => {
       console.error(err);
       return res.status(500).json({ msg: 'Failed to delete customer.' });
     }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ msg: 'Customer not found.' });
+    }
+
     res.status(200).json({ msg: 'Customer deleted successfully.' });
   });
 });

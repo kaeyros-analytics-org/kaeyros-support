@@ -1,25 +1,17 @@
 const modal = document.getElementById('myModal');
 const modal2 = document.getElementById('myModal2');
+const tr1 = document.getElementById('tr1');
 const closeButton = document.querySelector('.close');
 document.addEventListener('DOMContentLoaded', () => {
-const ticketForm = document.getElementById('ticketForm');
-const customersBtn = document.getElementById('customersBtn');
-const customerForm = document.getElementById('customerForm');
-const ticketsBtn = document.getElementById('ticketsBtn');
-const ticketsTableContainer = document.getElementById('ticketsTableContainer');
-const customersTableContainer = document.getElementById('customersTableContainer');
+  const ticketForm = document.getElementById('ticketForm');
+  const customersBtn = document.getElementById('customersBtn');
+  const customerForm = document.getElementById('customerForm');
+  const ticketsBtn = document.getElementById('ticketsBtn');
+  const ticketsTableContainer = document.getElementById('ticketsTableContainer');
+  const customersTableContainer = document.getElementById('customersTableContainer');
 
+  let isAdmin = false; 
 
-// get token
-function getToken() {
-  return localStorage.getItem('token');
-}
-
-function hideTables(){
-
-}
-
-  
   const token = getToken();
   if (!token) {
     alert('No token found. Please log in.');
@@ -37,24 +29,29 @@ function hideTables(){
         ticketForm.style.display = 'none';
         customerForm.style.display = 'block';
         customersBtn.style.display = 'block';
+
+        isAdmin = true; 
+        fetchCustomers(); 
       } else {
         customerForm.style.display = 'none';
         ticketForm.style.display = 'block';
         customersBtn.style.display = 'none';
+
+        isAdmin = false; 
       }
     })
-    
     .catch(error => {
       console.error('Error fetching role:', error);
     });
 
-customersBtn.addEventListener('click', function () {
+  customersBtn.addEventListener('click', function () {
+    if (isAdmin) {
+      ticketsTableContainer.style.display = 'none';
+      customersTableContainer.style.display = 'block';
 
-    ticketsTableContainer.style.display = 'none';
-    customersTableContainer.style.display = 'block';
-
-    customersBtn.style.display = 'none';
-    ticketsBtn.style.display = 'block';
+      customersBtn.style.display = 'none';
+      ticketsBtn.style.display = 'block';
+    }
   });
 
   ticketsBtn.addEventListener('click', function () {
@@ -62,9 +59,8 @@ customersBtn.addEventListener('click', function () {
     customersTableContainer.style.display = 'none';
 
     ticketsBtn.style.display = 'none';
-    customersBtn.style.display = 'block';
+    customersBtn.style.display = isAdmin ? 'block' : 'none';
   });
-
 });
 
 
@@ -159,20 +155,49 @@ async function fetchTickets() {
 
       tableBody.appendChild(row);
 
-      // Add a click event to each row to show the modal and populate data
-      row.addEventListener('click', function () {
-        modal.style.display = 'flex';
+         // Add a click event to each row to show the modal and populate data
+row.addEventListener('click', function () {
+  modal.style.display = 'flex';
 
-        const recupIdSubjecDiv = document.querySelector('.recup-id-subjec');
-        const boss = document.querySelector('.boss');
-        const boss1 = document.querySelector('.boss1');
 
-        // write ticket information in modal
-        recupIdSubjecDiv.innerHTML = `
-          <p><strong style='font-size: 30px;'> ${ticket.ticket_id} ${ticket.subject}</strong></p>`;
-        boss1.innerHTML = `<p><b>${ticket.type}</b></p>`;
-        boss.innerHTML = `<p><b>${ticket.priority}</b></p>`;
+
+      const recupIdSubjecDiv = document.querySelector('.recup-id-subjec');
+      const boss = document.querySelector('.boss');
+      const boss1 = document.querySelector('.boss1');
+
+      // Write ticket information in modal
+      recupIdSubjecDiv.innerHTML = `
+        <p style='font-size: 30px;'> ${ticket.ticket_id} &nbsp; &nbsp; &nbsp; ${ticket.subject}</p>`;
+      boss1.innerHTML = `<p><b>${ticket.type}</b></p>`;
+      boss.innerHTML = `<p><b>${ticket.priority}</b></p>`;
+
+      // Display ticket activity in accordion
+      const accordionContainer = document.querySelector('.accordion-container');
+      accordionContainer.innerHTML = `
+        <div class="accordion">
+          <p>Ticket Created: ${ticket.created_at}</p>
+          <img src="../public/image/arrow.jpg" class="arrow" />
+        </div>
+        <div class="panel">
+          <p>${ticket.description}</p>
+        </div>`;
+
+      // Loop through messages (from ticket.userMessages) and add to the accordion
+      ticket.userMessages.forEach(message => {
+        accordionContainer.innerHTML += `
+          <div class="accordion">
+            <p>${message.sender === 'admin' ? 'Admin Response' : 'User Message'}</p>
+            <img src="../public/image/arrow.jpg" class="arrow" />
+          </div>
+          <div class="panel">
+            <p>${message.content}</p>
+          </div>`;
       });
+
+   
+
+});
+ 
 
       // Count open and processed tickets
       if (ticket.status === 'open') {
@@ -192,6 +217,8 @@ async function fetchTickets() {
 }
 
 fetchTickets();
+
+
 
 // Modal close functionality
 closeButton.addEventListener('click', function () {
@@ -292,30 +319,41 @@ async function fetchCustomers() {
       row.appendChild(createCell(customer.name));
       row.appendChild(createCell(customer.email));
       row.appendChild(createCell(customer.phone_number));
-      row.appendChild(createCell(new Date(customer.creation_date).toLocaleDateString())); 
+      row.appendChild(createCell(new Date(customer.created_at).toLocaleDateString())); 
 
-      tableBody.appendChild(row);
+      const deleteBtn = document.querySelector('#deleteCustomersBtn');
+
+
 
       row.addEventListener('click', function () {
+
         modal2.style.display = 'flex';
-      
+
         const recupIdSubjecDiv = document.getElementById('recup-id-subjec2');
         const boss = document.getElementById('boss2');
         const boss1 = document.getElementById('boss12');
-      
+
+        
+
         // write ticket information in modal
         recupIdSubjecDiv.innerHTML = `
           <p><strong style='font-size: 30px;'> ${customer.id  } ${customer.email}</strong></p>`;
         boss1.innerHTML = `<p><b>${customer.name}</b></p>`;
         boss.innerHTML = `<p><b>${customer.project}</b></p>`;
-      });
-    });
 
+        deleteBtn.dataset.customerId = customer.id; 
+      });
+
+      tableBody.appendChild(row);
+    });
   } catch (error) {
-    console.error('Error fetching customers:', error);
-    alert('An error occurred while fetching customers.');
+    if (isAdmin) { 
+      console.error('Error fetching customers:', error);
+      alert('An error occurred while fetching customers.');
+    }
   }
 }
+
 
 
 fetchCustomers();
@@ -339,10 +377,16 @@ function getToken() {
   return localStorage.getItem('token');
 }
 
-function addDeleteButtonListener(deleteCustomersBtn, customerId) {
+function addDeleteButtonListener(deleteCustomersBtn) {
   deleteCustomersBtn.addEventListener('click', async () => {
-    const token = getToken();
+    const customerId = deleteCustomersBtn.dataset.customerId; // Retrieve the ID from the button
 
+    if (!customerId) {
+      alert("Customer ID is missing.");
+      return;
+    }
+
+    const token = getToken();
     if (!token) {
       alert("No token provided. Please log in.");
       return;
@@ -361,9 +405,10 @@ function addDeleteButtonListener(deleteCustomersBtn, customerId) {
 
       if (response.ok) {
         alert('Customer deleted successfully.');
-        // remove the row from the table
-        deleteCustomersBtn.closest('.modal').remove();
-        deleteCustomersBtn.closest('tr').remove();
+        // Close the modal and remove the row from the table
+        
+        document.getElementById('myModal2').style.display = 'none';
+        document.getElementById('tr1').remove();
       } else {
         const result = await response.json();
         alert('Failed to delete customer: ' + result.msg);
@@ -375,12 +420,9 @@ function addDeleteButtonListener(deleteCustomersBtn, customerId) {
   });
 }
 
-
-document.querySelectorAll('.deleteBtn').forEach(button => {
-  const customerId = button.dataset.customerId;
-  addDeleteButtonListener(button, customerId);
-});
-
+// Call this once the modal is shown
+const deleteBtn = document.querySelector('#deleteCustomersBtn');
+addDeleteButtonListener(deleteBtn);
 
 
 
