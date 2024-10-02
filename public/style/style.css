@@ -538,25 +538,38 @@ body{
     margin-right: 10px;
     cursor: pointer;
 }
-     
-     
-     
-     /* Styles for different message types */
-.sent-message {
-    background-color: #DCF8C6;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 5px 0;
-    text-align: right;
-}
 
-.received-message {
-    background-color: #F1F0F0;
+.deleteBtn{
+    width: 40%;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
     border-radius: 10px;
-    padding: 10px;
-    margin: 5px 0;
-    text-align: left;
+    background-color: #0F2A97;
+    color: white;
+    font-size: 20px;
+    margin-left: 230px;
+    cursor: pointer;
 }
+     
+     
+/* Style for admin responses */
+.admin-response {
+    background-color: lightgreen;
+    color: green;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Style for user responses */
+  .user-response {
+    background-color: lightblue;
+    color: blue;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
 
      
      

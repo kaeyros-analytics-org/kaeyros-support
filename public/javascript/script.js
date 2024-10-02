@@ -1,7 +1,9 @@
+// Modal and related DOM elements
 const modal = document.getElementById('myModal');
 const modal2 = document.getElementById('myModal2');
-const tr1 = document.getElementById('tr1');
 const closeButton = document.querySelector('.close');
+
+// Page load initialization
 document.addEventListener('DOMContentLoaded', () => {
   const ticketForm = document.getElementById('ticketForm');
   const customersBtn = document.getElementById('customersBtn');
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ticketsTableContainer = document.getElementById('ticketsTableContainer');
   const customersTableContainer = document.getElementById('customersTableContainer');
 
-  let isAdmin = false; 
+  let isAdmin = false;
 
   const token = getToken();
   if (!token) {
@@ -18,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  fetch('/api/customers/get-role', { 
+  // Fetch user role
+  fetch('/api/customers/get-role', {
     headers: {
       'auth-token': token
     }
@@ -29,14 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ticketForm.style.display = 'none';
         customerForm.style.display = 'block';
         customersBtn.style.display = 'block';
-
-        isAdmin = true; 
+        isAdmin = true;
         fetchCustomers(); 
       } else {
         customerForm.style.display = 'none';
         ticketForm.style.display = 'block';
         customersBtn.style.display = 'none';
-
         isAdmin = false; 
       }
     })
@@ -44,11 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching role:', error);
     });
 
+  // Toggle between customers and tickets
   customersBtn.addEventListener('click', function () {
     if (isAdmin) {
       ticketsTableContainer.style.display = 'none';
       customersTableContainer.style.display = 'block';
-
       customersBtn.style.display = 'none';
       ticketsBtn.style.display = 'block';
     }
@@ -57,13 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
   ticketsBtn.addEventListener('click', function () {
     ticketsTableContainer.style.display = 'block';
     customersTableContainer.style.display = 'none';
-
     ticketsBtn.style.display = 'none';
     customersBtn.style.display = isAdmin ? 'block' : 'none';
   });
 });
-
-
 
 
 // Create a new ticket
@@ -105,8 +103,6 @@ ticketForm.addEventListener('submit', async (event) => {
   }
 });
 
-
-
 // Fetch and display tickets
 async function fetchTickets() {
   const token = getToken();
@@ -123,14 +119,11 @@ async function fetchTickets() {
       }
     });
 
-
     if (!response.ok) {
       throw new Error('Failed to fetch tickets');
     }
 
     const tickets = await response.json();
-    console.log("Fetched tickets:", tickets);
-
     const tableBody = document.querySelector(".tickets-table tbody");
     tableBody.innerHTML = "";
 
@@ -155,49 +148,11 @@ async function fetchTickets() {
 
       tableBody.appendChild(row);
 
-         // Add a click event to each row to show the modal and populate data
-row.addEventListener('click', function () {
-  modal.style.display = 'flex';
-
-
-
-      const recupIdSubjecDiv = document.querySelector('.recup-id-subjec');
-      const boss = document.querySelector('.boss');
-      const boss1 = document.querySelector('.boss1');
-
-      // Write ticket information in modal
-      recupIdSubjecDiv.innerHTML = `
-        <p style='font-size: 30px;'> ${ticket.ticket_id} &nbsp; &nbsp; &nbsp; ${ticket.subject}</p>`;
-      boss1.innerHTML = `<p><b>${ticket.type}</b></p>`;
-      boss.innerHTML = `<p><b>${ticket.priority}</b></p>`;
-
-      // Display ticket activity in accordion
-      const accordionContainer = document.querySelector('.accordion-container');
-      accordionContainer.innerHTML = `
-        <div class="accordion">
-          <p>Ticket Created: ${ticket.created_at}</p>
-          <img src="../public/image/arrow.jpg" class="arrow" />
-        </div>
-        <div class="panel">
-          <p>${ticket.description}</p>
-        </div>`;
-
-      // Loop through messages (from ticket.userMessages) and add to the accordion
-      ticket.userMessages.forEach(message => {
-        accordionContainer.innerHTML += `
-          <div class="accordion">
-            <p>${message.sender === 'admin' ? 'Admin Response' : 'User Message'}</p>
-            <img src="../public/image/arrow.jpg" class="arrow" />
-          </div>
-          <div class="panel">
-            <p>${message.content}</p>
-          </div>`;
+      // When a row is clicked, show the modal and populate ticket data and responses
+      row.addEventListener('click', function () {
+        modal.style.display = 'flex';
+        displayTicketDetails(ticket);
       });
-
-   
-
-});
- 
 
       // Count open and processed tickets
       if (ticket.status === 'open') {
@@ -218,20 +173,162 @@ row.addEventListener('click', function () {
 
 fetchTickets();
 
+// Display ticket details in the modal and fetch responses
+function displayTicketDetails(ticket) {
+  const recupIdSubjecDiv = document.querySelector('.recup-id-subjec');
+  const boss = document.querySelector('.boss');
+  const boss1 = document.querySelector('.boss1');
+  const sendMessageButton = document.getElementById('responseBtn');
+
+  // Clear previous event listeners to avoid duplication
+  sendMessageButton.replaceWith(sendMessageButton.cloneNode(true));
+  const newSendMessageButton = document.getElementById('responseBtn');
+
+  // Write ticket information in modal
+  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px;'> ${ticket.ticket_id} ${ticket.subject}</strong></p>`;
+  boss1.innerHTML = `<p><b>${ticket.type}</b></p>`;
+  boss.innerHTML = `<p><b>${ticket.priority}</b></p>`;
+
+  const ticketId = ticket.id; // Ensure correct ticketId is used
+
+  // Fetch ticket responses and display them
+  const token = getToken();
+
+  fetch(`/api/responses/${ticketId}/responses`, {
+    method: 'GET',
+    headers: {
+      'auth-token': token, // Ensure token is provided
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(responses => {
+      console.log('Received responses:', responses); // Log raw response data
+
+      if (!Array.isArray(responses)) {
+        throw new TypeError('Expected an array of responses.');
+      }
+
+      const accordionContainer = document.querySelector('.accordion-container');
+      accordionContainer.innerHTML = ''; // Clear previous responses
+
+      // Add ticket activity (creation)
+      accordionContainer.innerHTML += `
+        <div class="accordion">
+          <p>Ticket Created: ${new Date(ticket.created_at).toLocaleString()}</p>
+          <img src="../image/arrow.jpg" class="arrow" />
+        </div>
+        <div class="panel">
+          <p>${ticket.description}</p>
+        </div>`;
+
+      // Add all the responses to the accordion
+      responses.forEach(response => {
+        const sender = response.sender === 'admin' ? 'Admin Response' : 'User Message';
+        const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
+        
+        accordionContainer.innerHTML += `
+          <div class="accordion">
+            <p>${sender}</p>
+            <img src="../image/arrow.jpg" class="arrow" />
+          </div>
+          <div class="panel">
+            <p class="${responseClass}">${response.response}</p>
+          </div>`;
+      });
+
+      
+      addAccordionFunctionality();
+    })
+    .catch(err => {
+      console.error('Failed to fetch responses:', err); 
+    });
+
+// Event listener for sending a response
+newSendMessageButton.addEventListener('click', function () {
+  const responseTextArea = document.getElementById('response'); 
+  const responseContent = responseTextArea.value;
+
+  if (!responseContent.trim()) {
+    alert('Response cannot be empty.');
+    return;
+  }
+
+
+  const payload = {
+    response: responseContent,
+    images: null // Image uploading can be added later
+  };
+
+  const token = getToken();
+
+  // Send the response to the backend
+  fetch(`/api/responses/${ticketId}/responses`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'auth-token': token 
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.msg === 'Response sent successfully.') {
+        responseTextArea.value = ''; 
+        displayTicketDetails(ticket);
+      }
+    })
+    .catch(err => console.error('Failed to send response:', err));
+});
+}
+
+// Utility: Get token from local storage
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+
+
+// Accordion toggle functionality
+function addAccordionFunctionality() {
+  const accordions = document.querySelectorAll('.accordion');
+  accordions.forEach(accordion => {
+    accordion.addEventListener('click', () => {
+      const panel = accordion.nextElementSibling;
+      accordion.classList.toggle('active');
+      if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+}
+
+
 
 
 // Modal close functionality
-closeButton.addEventListener('click', function () {
+closeButton.addEventListener('click', () => {
   modal.style.display = 'none';
-  modal2.style.display = 'none';
 });
 
-// Close the modal when clicking outside the modal content
-window.addEventListener('click', function (event) {
-  if (event.target === modal) {
+window.onclick = function (event) {
+  if (event.target == modal) {
     modal.style.display = 'none';
   }
-});
+};
+
+// Utility: Get token from local storage
+function getToken() {
+  return localStorage.getItem('token');
+}
+
 
 
 
@@ -307,45 +404,45 @@ async function fetchCustomers() {
 
     customers.forEach(customer => {
       const row = document.createElement('tr');
-
+    
+      // Assign a unique ID to the row based on the customer ID
+      row.id = `customer-row-${customer.id}`;
+    
       const createCell = (text) => {
         const cell = document.createElement('td');
         cell.textContent = text;
         return cell;
       };
-
+    
       row.appendChild(createCell(customer.id));
       row.appendChild(createCell(customer.project));
       row.appendChild(createCell(customer.name));
       row.appendChild(createCell(customer.email));
       row.appendChild(createCell(customer.phone_number));
       row.appendChild(createCell(new Date(customer.created_at).toLocaleDateString())); 
-
+    
       const deleteBtn = document.querySelector('#deleteCustomersBtn');
-
-
-
+    
       row.addEventListener('click', function () {
-
         modal2.style.display = 'flex';
-
+    
         const recupIdSubjecDiv = document.getElementById('recup-id-subjec2');
         const boss = document.getElementById('boss2');
         const boss1 = document.getElementById('boss12');
-
-        
-
+    
         // write ticket information in modal
         recupIdSubjecDiv.innerHTML = `
           <p><strong style='font-size: 30px;'> ${customer.id  } ${customer.email}</strong></p>`;
         boss1.innerHTML = `<p><b>${customer.name}</b></p>`;
         boss.innerHTML = `<p><b>${customer.project}</b></p>`;
-
+    
+        // Store customer ID in the delete button dataset for deletion
         deleteBtn.dataset.customerId = customer.id; 
       });
-
+    
       tableBody.appendChild(row);
     });
+    
   } catch (error) {
     if (isAdmin) { 
       console.error('Error fetching customers:', error);
@@ -379,7 +476,7 @@ function getToken() {
 
 function addDeleteButtonListener(deleteCustomersBtn) {
   deleteCustomersBtn.addEventListener('click', async () => {
-    const customerId = deleteCustomersBtn.dataset.customerId; // Retrieve the ID from the button
+    const customerId = deleteCustomersBtn.dataset.customerId; // Get the customer ID from the dataset
 
     if (!customerId) {
       alert("Customer ID is missing.");
@@ -405,10 +502,17 @@ function addDeleteButtonListener(deleteCustomersBtn) {
 
       if (response.ok) {
         alert('Customer deleted successfully.');
-        // Close the modal and remove the row from the table
         
+        // Close the modal
         document.getElementById('myModal2').style.display = 'none';
-        document.getElementById('tr1').remove();
+        
+        // Dynamically remove the row associated with the deleted customer
+        const rowToDelete = document.getElementById(`customer-row-${customerId}`);
+        if (rowToDelete) {
+          rowToDelete.remove();
+        } else {
+          console.error(`Row for customer ID ${customerId} not found.`);
+        }
       } else {
         const result = await response.json();
         alert('Failed to delete customer: ' + result.msg);
@@ -420,21 +524,8 @@ function addDeleteButtonListener(deleteCustomersBtn) {
   });
 }
 
-// Call this once the modal is shown
+// Initialize delete button listener
 const deleteBtn = document.querySelector('#deleteCustomersBtn');
 addDeleteButtonListener(deleteBtn);
 
 
-
-const accordions = document.querySelectorAll('.accordion');
-accordions.forEach(accordion => {
-accordion.addEventListener('click', () => {
-const panel = accordion.nextElementSibling;
-accordion.classList.toggle('active');
-if (panel.style.maxHeight) {
-panel.style.maxHeight = null;
-} else {
-panel.style.maxHeight = panel.scrollHeight + 'px';
-}
-});
-});
