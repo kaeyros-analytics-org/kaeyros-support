@@ -326,6 +326,7 @@ body{
     }
      
     .modal-content {
+    overflow: scroll;
     background-color: #fefefe;
     margin-bottom: 30px;
     padding: 20px;
@@ -333,6 +334,7 @@ body{
     border-radius: 10px;
     width:50%;
     max-width: 750px;
+    max-height: 90%;
     }
 
     .close {

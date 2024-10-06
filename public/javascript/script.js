@@ -197,7 +197,7 @@ function displayTicketDetails(ticket) {
   fetch(`/api/responses/${ticketId}/responses`, {
     method: 'GET',
     headers: {
-      'auth-token': token, // Ensure token is provided
+      'auth-token': token,
       'Content-Type': 'application/json'
     }
   })
@@ -287,7 +287,7 @@ newSendMessageButton.addEventListener('click', function () {
 });
 }
 
-// Utility: Get token from local storage
+
 function getToken() {
   return localStorage.getItem('token');
 }
@@ -366,8 +366,8 @@ document.getElementById('customerForm').addEventListener('submit', async (event)
 
     if (response.ok) {
       alert('Customer registered successfully!');
-      document.getElementById('customerForm').reset(); // Reset form after success
-      fetchCustomers(); // Fetch and display updated customer list
+      document.getElementById('customerForm').reset();
+      fetchCustomers(); 
     } else {
       const result = await response.json();
       alert('Registration failed: ' + result.msg);
@@ -430,7 +430,7 @@ async function fetchCustomers() {
         const boss = document.getElementById('boss2');
         const boss1 = document.getElementById('boss12');
     
-        // write ticket information in modal
+        // write customer information in modal
         recupIdSubjecDiv.innerHTML = `
           <p><strong style='font-size: 30px;'> ${customer.id  } ${customer.email}</strong></p>`;
         boss1.innerHTML = `<p><b>${customer.name}</b></p>`;
