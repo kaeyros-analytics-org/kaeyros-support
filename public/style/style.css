@@ -28,6 +28,7 @@ body{
     justify-content: space-between;
     /* gap: 50px; */
     height: 100vh;
+    margin-bottom: 0;
     }
      
     .focuss:focus{
@@ -37,7 +38,7 @@ body{
      
     .section-1{
     background-color: rgb(243,245,247);
-    min-height: 111%;
+    min-height: 100%;
     /* position: fixed; */
     }
      
@@ -79,15 +80,16 @@ body{
     display: flex;
     justify-content: space-between;
     }
-    .prizesTableContainer{
+    .ticketsTableContainer{
     overflow-y: scroll;
-    height: 80%;
+    height: 100%;
     }
      
     .section-2{
     width: 100%;
     overflow-y: scroll;
     min-height: 100vh;
+    margin-bottom: 20px;
     }
     hr{
     margin: 0px;

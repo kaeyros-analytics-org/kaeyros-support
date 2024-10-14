@@ -185,9 +185,9 @@ function displayTicketDetails(ticket) {
   const newSendMessageButton = document.getElementById('responseBtn');
 
   // Write ticket information in modal
-  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px;'> ${ticket.ticket_id} ${ticket.subject}</strong></p>`;
-  boss1.innerHTML = `<p><b>${ticket.type}</b></p>`;
-  boss.innerHTML = `<p><b>${ticket.priority}</b></p>`;
+  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px; display: flex; color: #FF5F00; gap: 60px;'> ${ticket.ticket_id} ${ticket.subject}</strong></p>`;
+  boss1.innerHTML = `<p>${ticket.type}</p>`;
+  boss.innerHTML = `<p>${ticket.priority}</p>`;
 
   const ticketId = ticket.id; // Ensure correct ticketId is used
 
