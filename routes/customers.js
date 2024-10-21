@@ -145,4 +145,26 @@ router.get('/get-role', authenticate, (req, res) => {
 });
 
 
+//user info in sidebar
+// Get customer by ID (no admin check)
+router.get('/:id', authenticate, (req, res) => {
+  const customerId = req.params.id;
+
+  const getCustomerByIdQuery = 'SELECT id, name, email, phone_number, project, created_at, role FROM customers WHERE id = ?';
+
+  db.query(getCustomerByIdQuery, [customerId], (err, results) => {
+    if (err) {
+      console.error('Error fetching customer by ID:', err);
+      return res.status(500).json({ msg: 'Failed to retrieve customer.' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ msg: 'Customer not found.' });
+    }
+
+    res.status(200).json({ customer: results[0] });
+  });
+});
+
+
 module.exports = router;

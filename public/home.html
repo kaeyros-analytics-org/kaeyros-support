@@ -20,22 +20,26 @@
             <img class="logo-img" src="../image/ap-logo.png" alt="Logo" />
           </div>
           <div>
-            <p><b>Kaeyros </b> <br />Analytics</p>
+            <p><b>Kaeyros</b> <br />Analytics</p>
           </div>
         </div>
         <hr />
         <div class="asid-contact">
           <div class="asid-contacts">
-            <b>Contact us form</b>
+            <b>Your Information</b>
           </div>
           <div class="asid-contat">
             <div class="flexs">
               <img src="../image/phone.png" class="image" alt="phone" />
-              <p>Phone Number</p>
+              <p>Name: <span style="color: brown;"></span><div id="customer-name">Loading...</div></span></p>
             </div>
             <div class="flexs">
               <img src="../image/email.png" class="image" alt="email" />
-              <p>Email</p>
+              <p>Email: <span id="customer-email">Loading...</span></p>
+            </div>
+            <div class="flexs">
+              <img src="../image/phone.png" class="image" alt="phone" />
+              <p>Phone Number: <span id="customer-phone">Loading...</span></p>
             </div>
           </div>
         </div>
@@ -254,6 +258,7 @@
                     <th>Priority</th>
                     <th>Ticket Type</th>
                     <th>date</th>
+                    <th>status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,7 +267,7 @@
               </table>
               <div id="myModal" class="modal">
                 <div class="modal-content">
-                  <span class="close">&times;</span>
+                  <span class="close" id="modalCloseBtn">&times;</span>
                   <div class="ticket-preview">
                     <div class="ticket-header">
                       <h2>Ticket Preview</h2>
@@ -274,6 +279,7 @@
                         <div class="ID">
                           <strong id="ID"></strong
                           ><strong id="sujet"></strong>
+                          
                         </div>
                         <div>
                           <button type="submit" class="open">open</button>
@@ -285,7 +291,7 @@
                             <p><strong>Ticket Type</strong></p>
                           </div>
                           <div class="boss1">
-                            <p>Incident</p>
+                            <p></p>
                           </div>
                         </div>
                         <div class="recup-type-priority recup-type-priority-2">
@@ -293,7 +299,15 @@
                             <p><strong>Priority</strong></p>
                           </div>
                           <div class="boss">
-                            <p>Medium</p>
+                            <p></p>
+                          </div>
+                        </div>
+                        <div class="recup-type-priority recup-type-priority-1">
+                          <div class="base">
+                            <p><strong>status</strong></p>
+                          </div>
+                          <div class="boss2">
+                            <p></p>
                           </div>
                         </div>
                       </div>
@@ -303,7 +317,7 @@
                     </div>
 
                     <div>
-                      <h1>Ticket Activity</h1>
+                      <div class="activity"><h1>Ticket Activity</h1></div>
                       <div class="accordion-container">
                        
                       </div>
@@ -347,7 +361,7 @@
               </table>
               <div id="myModal2" class="modal">
                 <div class="modal-content">
-                  <span class="close">&times;</span>
+                  <span class="close" id="modalCloseBtn">&times;</span>
                   <div class="ticket-preview">
                     <div class="ticket-header">
                       <h2>Customer Preview</h2>

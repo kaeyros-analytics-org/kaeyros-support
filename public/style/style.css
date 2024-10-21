@@ -170,6 +170,7 @@ body{
     display: flex;
     justify-content: start;
     align-items: center;
+    /* flex-direction: column; */
     gap: 10px;
     }
      
@@ -450,11 +451,12 @@ body{
         padding: 18px;
         width: 95%;
         border: none;
+        border-radius: 5px;
         text-align: left;
         outline: none;
         font-size: 16px;
         transition: background-color 0.3s ease;
-        border-bottom: 1px solid #ddd;
+        /* border-bottom: 1px solid #ddd; */
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -560,16 +562,16 @@ body{
      
 /* Style for admin responses */
 .admin-response {
-    background-color: lightgreen;
-    color: green;
+    background-color: rgb(222, 237, 222);
+    color: black;
     padding: 10px;
     border-radius: 5px;
   }
   
   /* Style for user responses */
   .user-response {
-    background-color: lightblue;
-    color: blue;
+    background-color: rgb(220, 237, 243);
+    color: black;
     padding: 10px;
     border-radius: 5px;
   }
@@ -577,7 +579,17 @@ body{
 
      
      
-     
+.activity {
+    border-bottom: 2px dotted black;
+    width: 24%;
+    margin-top: 0;
+    padding-top: 0px;
+}
+
+.status {
+    margin-top: 0;
+    padding: 2px;
+}
      
      
      

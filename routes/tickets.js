@@ -91,15 +91,15 @@ router.get('/:id', authenticate, (req, res) => {
 router.put('/:id', authenticate, (req, res) => {
   const ticketId = req.params.id;
   const customer_id = req.customer_id;
-  const { project, subject, type, description, priority, status } = req.body;
+  const { status } = req.body;
 
   const query = req.role === 'admin'
-    ? 'UPDATE tickets SET project = ?, subject = ?, type = ?, description = ?, priority = ?, status = ? WHERE id = ?'
-    : 'UPDATE tickets SET project = ?, subject = ?, type = ?, description = ?, priority = ?, status = ? WHERE id = ? AND customer_id = ?';
+    ? 'UPDATE tickets SET status = ? WHERE id = ?'
+    : 'UPDATE tickets SET status = ? WHERE id = ? AND customer_id = ?';
 
   const queryParams = req.role === 'admin'
-    ? [project, subject, type, description, priority, status, ticketId]
-    : [project, subject, type, description, priority, status, ticketId, customer_id];
+    ? [ status, ticketId]
+    : [ status, ticketId, customer_id];
 
   db.query(query, queryParams, (err, result) => {
     if (err) {

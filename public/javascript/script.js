@@ -1,7 +1,7 @@
 // Modal and related DOM elements
 const modal = document.getElementById('myModal');
 const modal2 = document.getElementById('myModal2');
-const closeButton = document.querySelector('.close');
+const closeButton = document.getElementById('modalCloseBtn');
 
 // Page load initialization
 document.addEventListener('DOMContentLoaded', () => {
@@ -145,6 +145,13 @@ async function fetchTickets() {
       row.appendChild(createCell(ticket.priority));
       row.appendChild(createCell(ticket.type));
       row.appendChild(createCell(new Date(ticket.created_at).toLocaleDateString()));
+      
+
+       // Status cell with color coding
+       const statusCell = document.createElement("td");
+       statusCell.textContent = ticket.status;
+       statusCell.style.color = ticket.status === 'open' ? 'green' : 'red';
+       row.appendChild(statusCell);
 
       tableBody.appendChild(row);
 
@@ -157,7 +164,7 @@ async function fetchTickets() {
       // Count open and processed tickets
       if (ticket.status === 'open') {
         openTicketsCount++;
-      } else if (ticket.status === 'processed') {
+      } else if (ticket.status === 'closed') {
         processedTicketsCount++;
       }
     });
@@ -173,11 +180,14 @@ async function fetchTickets() {
 
 fetchTickets();
 
+
+
 // Display ticket details in the modal and fetch responses
 function displayTicketDetails(ticket) {
   const recupIdSubjecDiv = document.querySelector('.recup-id-subjec');
   const boss = document.querySelector('.boss');
   const boss1 = document.querySelector('.boss1');
+  const boss2 = document.querySelector('.boss2');
   const sendMessageButton = document.getElementById('responseBtn');
 
   // Clear previous event listeners to avoid duplication
@@ -185,9 +195,94 @@ function displayTicketDetails(ticket) {
   const newSendMessageButton = document.getElementById('responseBtn');
 
   // Write ticket information in modal
-  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px; display: flex; color: #FF5F00; gap: 60px;'> ${ticket.ticket_id} ${ticket.subject}</strong></p>`;
+  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px; display: flex; color: grey; gap: 60px;'> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
   boss1.innerHTML = `<p>${ticket.type}</p>`;
   boss.innerHTML = `<p>${ticket.priority}</p>`;
+
+  // Create dropdown for status
+  const statusDropdown = document.createElement("select");
+  statusDropdown.name = "status";
+  statusDropdown.classList.add("status-dropdown");
+
+  // Create the 'open' option
+  const openOption = document.createElement("option");
+  openOption.value = "open";
+  openOption.textContent = "open";
+  openOption.style.color = "green";
+
+  // Create the 'closed' option
+  const closedOption = document.createElement("option");
+  closedOption.value = "closed";
+  closedOption.textContent = "closed";
+  closedOption.style.color = "red";
+
+  // Append the options to the dropdown
+  statusDropdown.appendChild(openOption);
+  statusDropdown.appendChild(closedOption);
+
+  // Set the current status in the dropdown
+  statusDropdown.value = ticket.status;
+
+  // Apply color styles based on the selected status
+  updateDropdownColor(statusDropdown);
+
+  // Event listener for status change
+  statusDropdown.addEventListener('change', async function () {
+    const newStatus = statusDropdown.value;
+
+    // Update the status in the backend
+    try {
+      await updateTicketStatus(ticket.id, newStatus);
+      ticket.status = newStatus; // Update local status
+      updateDropdownColor(statusDropdown); // Update color based on new status
+
+      // Update the status in the table without reloading the page
+      const tableRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
+      if (tableRow) {
+        const statusCell = tableRow.querySelector('td:nth-child(7)');
+        statusCell.textContent = newStatus;
+        statusCell.style.color = newStatus === 'open' ? 'green' : 'red';
+      }
+
+      console.log(`Ticket status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating ticket status:', error);
+      alert('Failed to update ticket status');
+    }
+  });
+
+  // Clear previous status and append the dropdown
+  boss2.innerHTML = '';
+  boss2.appendChild(statusDropdown);
+
+  // Function to update the dropdown color based on selected status
+  function updateDropdownColor(dropdown) {
+    const selectedValue = dropdown.value;
+    dropdown.style.color = selectedValue === 'open' ? 'green' : 'red';
+  }
+
+  // Function to update ticket status in the backend
+  async function updateTicketStatus(ticketId, newStatus) {
+    const token = getToken();
+    try {
+      const response = await fetch(`http://localhost:3000/api/tickets/${ticketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update ticket status');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw new Error('Error updating ticket status');
+    }
+  }
 
   const ticketId = ticket.id; // Ensure correct ticketId is used
 
@@ -217,10 +312,20 @@ function displayTicketDetails(ticket) {
       const accordionContainer = document.querySelector('.accordion-container');
       accordionContainer.innerHTML = ''; // Clear previous responses
 
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = String(date.getFullYear()).slice(-2); 
+        const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        return `${day}/${month}/${year} ${time}`;
+      }
+
       // Add ticket activity (creation)
       accordionContainer.innerHTML += `
         <div class="accordion">
-          <p>Ticket Created: ${new Date(ticket.created_at).toLocaleString()}</p>
+          <p>Ticket Created: ${formatDate(ticket.created_at)}</p>
           <img src="../image/arrow.jpg" class="arrow" />
         </div>
         <div class="panel">
@@ -229,12 +334,13 @@ function displayTicketDetails(ticket) {
 
       // Add all the responses to the accordion
       responses.forEach(response => {
-        const sender = response.sender === 'admin' ? 'Admin Response' : 'User Message';
+        const sender = response.sender === 'admin' ? '<span style="color: green; font-size: 20px;">Admin Response</span>' : '<span style="color: blue; font-size: 20px;">User Message</span>' ;
         const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
+        const dateTime = formatDate(response.created_at);
         
         accordionContainer.innerHTML += `
           <div class="accordion">
-            <p>${sender}</p>
+            <p>${sender} - <span style="font-size: 14px; color: grey;">${dateTime}</span></p>
             <img src="../image/arrow.jpg" class="arrow" />
           </div>
           <div class="panel">
@@ -249,6 +355,7 @@ function displayTicketDetails(ticket) {
       console.error('Failed to fetch responses:', err); 
     });
 
+  
 // Event listener for sending a response
 newSendMessageButton.addEventListener('click', function () {
   const responseTextArea = document.getElementById('response'); 
@@ -285,7 +392,7 @@ newSendMessageButton.addEventListener('click', function () {
     })
     .catch(err => console.error('Failed to send response:', err));
 });
-}
+
 
 
 function getToken() {
@@ -330,6 +437,7 @@ function getToken() {
 }
 
 
+}
 
 
 ////////////////////////////////////////////
@@ -366,6 +474,7 @@ document.getElementById('customerForm').addEventListener('submit', async (event)
 
     if (response.ok) {
       alert('Customer registered successfully!');
+      localStorage.setItem('customerId', result.customer.id);
       document.getElementById('customerForm').reset();
       fetchCustomers(); 
     } else {
@@ -443,6 +552,8 @@ async function fetchCustomers() {
       tableBody.appendChild(row);
     });
     
+
+    
   } catch (error) {
     if (isAdmin) { 
       console.error('Error fetching customers:', error);
@@ -452,9 +563,10 @@ async function fetchCustomers() {
 }
 
 
-
 fetchCustomers();
 
+
+       
 
 function getToken() {
   return localStorage.getItem('auth-token');
@@ -529,3 +641,56 @@ const deleteBtn = document.querySelector('#deleteCustomersBtn');
 addDeleteButtonListener(deleteBtn);
 
 
+
+
+// // Fetch and display the customer's information in the sidebar
+// function getCustomerId() {
+//   return localStorage.getItem('customerId');
+// }
+
+// function getToken() {
+//   return localStorage.getItem('token');
+// }
+
+// // Fetch and display the customer's information in the sidebar
+// async function fetchCustomerInfo() {
+//   try {
+//     const token = getToken();
+//     if (!token) {
+//       alert("No token provided. Please log in.");
+//       return;
+//     }
+
+//     const customerId = getCustomerId(); 
+//     console.log('Customer ID for fetch:', customerId); // Debugging log
+
+//     if (!customerId) {
+//       alert("Customer ID is null. Please log in again.");
+//       return;
+//     }
+
+//     const response = await fetch(`/api/customers/${customerId}`, {
+//       headers: {
+//         'auth-token': token 
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch customer information');
+//     }
+
+//     const result = await response.json();
+//     const customer = result.customer; // Assuming the endpoint returns the customer object as `customer`
+
+//     // Update the sidebar with customer information
+//     document.getElementById('customer-name').textContent = customer.name;
+//     document.getElementById('customer-email').textContent = customer.email;
+//     document.getElementById('customer-phone').textContent = customer.phone_number;
+//   } catch (error) {
+//     console.error('Error fetching customer information:', error);
+//     alert('An error occurred while retrieving your information.');
+//   }
+// }
+
+// // Call the function to fetch customer information when the page loads
+// fetchCustomerInfo();

@@ -20,6 +20,7 @@ form.addEventListener('submit', async (event) => {
         alert('Login successful!');
         localStorage.setItem('token', result.token);  
         window.location.href = 'home.html';
+        localStorage.setItem('customerId', result.customer.id);
     } else {
         alert('Login failed: ' + result.message);
     }
