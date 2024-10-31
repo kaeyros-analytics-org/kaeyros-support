@@ -68,7 +68,7 @@ router.get('/all', authenticate, (req, res) => {
     return res.status(403).json({ msg: 'Access refused. Admins only.' });
   }
 
-  const getAllCustomersQuery = 'SELECT id, name, email, phone_number, project, created_at, role FROM customers';
+  const getAllCustomersQuery = 'SELECT id, name, email, phone_number, project, ticket_count, created_at, role FROM customers';
   
   db.query(getAllCustomersQuery, (err, results) => {
     if (err) {
@@ -164,6 +164,17 @@ router.get('/:id', authenticate, (req, res) => {
 
     res.status(200).json({ customer: results[0] });
   });
+});
+
+
+
+router.get('/profile', authenticate, async (req, res) => {
+  try {
+    const customer = await customer.findById(req.customer_id).select('name email phone_number role');
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error retrieving profile data' });
+  }
 });
 
 

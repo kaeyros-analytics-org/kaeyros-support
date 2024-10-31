@@ -28,7 +28,7 @@
           <div class="asid-contacts">
             <b>Your Information</b>
           </div>
-          <div class="asid-contat">
+          <div class="asid-contat" id="asid-contact">
             <div class="flexs">
               <img src="../image/phone.png" class="image" alt="phone" />
               <p>Name: <span style="color: brown;"></span><div id="customer-name">Loading...</div></span></p>
@@ -236,10 +236,10 @@
             <div class="box-container" id="boxContainer">
               <div class="box">TICKETS: <span id="ticketCount">0</span></div>
               <div class="box">
-                TICKET ALREADY OPEN: <span id="openTicketCount">0</span>
+                TICKETS OPEN: <span id="openTicketCount">0</span>
               </div>
               <div class="box">
-                TICKET ALREADY PROCESSED:
+                TICKETS CLOSED:
                 <span id="processedTicketCount">0</span>
               </div>
             </div>
@@ -270,8 +270,8 @@
                   <span class="close" id="modalCloseBtn">&times;</span>
                   <div class="ticket-preview">
                     <div class="ticket-header">
-                      <h2>Ticket Preview</h2>
-                      <button>View Full Details</button>
+                      <h2>Ticket preview</h2>
+                      <!-- <button>View Full Details</button> -->
                     </div>
 
                     <div class="selects">
@@ -282,13 +282,13 @@
                           
                         </div>
                         <div>
-                          <button type="submit" class="open">open</button>
+                          <button type="submit" class="open">Open</button>
                         </div>
                       </div>
                       <div class="type-priority">
                         <div class="recup-type-priority recup-type-priority-1">
                           <div class="base">
-                            <p><strong>Ticket Type</strong></p>
+                            <p><strong>Ticket type</strong></p>
                           </div>
                           <div class="boss1">
                             <p></p>
@@ -302,9 +302,9 @@
                             <p></p>
                           </div>
                         </div>
-                        <div class="recup-type-priority recup-type-priority-1">
+                        <div class="recup-type-priority recup-type-priority-3">
                           <div class="base">
-                            <p><strong>status</strong></p>
+                            <p><strong>Status</strong></p>
                           </div>
                           <div class="boss2">
                             <p></p>
@@ -317,7 +317,7 @@
                     </div>
 
                     <div>
-                      <div class="activity"><h1>Ticket Activity</h1></div>
+                      <div class="activity"><h1>Ticket activity</h1></div>
                       <div class="accordion-container">
                        
                       </div>
@@ -330,7 +330,7 @@
                     <button class="responseBtn" id="responseBtn" type="submit">Send message</button>
                     </div>
                   </div>
-                    <div class="ticket-footer">TICKET 192 HAS BEEN UPDATED</div>
+                    <div class="ticket-footer" id="ticket-footer">TICKET ... IS UP TO DATE</div>
                   </div>
                 </div>
               </div>
@@ -352,6 +352,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone Number</th>
+                    <th>Number of Tickets</th>
                     <th>Creation date</th>
                   </tr>
                 </thead>
@@ -364,12 +365,12 @@
                   <span class="close" id="modalCloseBtn">&times;</span>
                   <div class="ticket-preview">
                     <div class="ticket-header">
-                      <h2>Customer Preview</h2>
+                      <h2>Customer View</h2>
                       <button>View Full Details</button>
                     </div>
 
                     <div class="selects">
-                      <div class="recup-id-subjec" id="recup-id-subjec2"></div>
+                      <div class="recup-id-subjec2" id="recup-id-subjec2"></div>
                       <div class="type-priority">
                         <div class="recup-type-priority recup-type-priority-1">
                           <div class="base">

@@ -103,6 +103,39 @@ ticketForm.addEventListener('submit', async (event) => {
   }
 });
 
+
+// Fetch and display user info in sidebar
+async function displayUserInfo() {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const response = await fetch('/api/customers/profile', {
+      headers: { 'auth-token': token }
+    });
+    const data = await response.json();
+
+    if (data.customer) {
+      const { name, email, phone_number, role } = data.customer;
+      if (role === 'admin') {
+        document.getElementById('admin-info').textContent = `Admin: ${name}`;
+        // Add additional admin-specific elements here
+      } else {
+        document.getElementById('asid-contact').innerHTML = `
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone_number}</p>
+        `;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+  }
+}
+
+displayUserInfo(); // Call this on page load
+
+
 // Fetch and display tickets
 async function fetchTickets() {
   const token = getToken();
@@ -145,7 +178,8 @@ async function fetchTickets() {
       row.appendChild(createCell(ticket.priority));
       row.appendChild(createCell(ticket.type));
       row.appendChild(createCell(new Date(ticket.created_at).toLocaleDateString()));
-      
+
+     
 
        // Status cell with color coding
        const statusCell = document.createElement("td");
@@ -153,6 +187,15 @@ async function fetchTickets() {
        statusCell.style.color = ticket.status === 'open' ? 'green' : 'red';
        row.appendChild(statusCell);
 
+      tableBody.appendChild(row);
+
+       const unreadCell = document.createElement('td');
+      if (ticket.unreadResponses > 0) {
+        unreadCell.innerHTML = `<span class="notification-badge">${ticket.unreadResponses}</span>`;
+      }
+      row.appendChild(unreadCell);
+  
+      // Add other ticket data cells here
       tableBody.appendChild(row);
 
       // When a row is clicked, show the modal and populate ticket data and responses
@@ -168,6 +211,7 @@ async function fetchTickets() {
         processedTicketsCount++;
       }
     });
+    
 
     document.getElementById('ticketCount').textContent = tickets.length;
     document.getElementById('openTicketCount').textContent = openTicketsCount;
@@ -177,6 +221,8 @@ async function fetchTickets() {
     alert("An error occurred while fetching the tickets.");
   }
 }
+
+
 
 fetchTickets();
 
@@ -195,7 +241,7 @@ function displayTicketDetails(ticket) {
   const newSendMessageButton = document.getElementById('responseBtn');
 
   // Write ticket information in modal
-  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 30px; display: flex; color: grey; gap: 60px;'> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
+  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 22px; display: flex; color: white; gap: 60px;'> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
   boss1.innerHTML = `<p>${ticket.type}</p>`;
   boss.innerHTML = `<p>${ticket.priority}</p>`;
 
@@ -209,6 +255,7 @@ function displayTicketDetails(ticket) {
   openOption.value = "open";
   openOption.textContent = "open";
   openOption.style.color = "green";
+  openOption.style.backgroundcolor = "green";
 
   // Create the 'closed' option
   const closedOption = document.createElement("option");
@@ -259,6 +306,8 @@ function displayTicketDetails(ticket) {
   function updateDropdownColor(dropdown) {
     const selectedValue = dropdown.value;
     dropdown.style.color = selectedValue === 'open' ? 'green' : 'red';
+    dropdown.style.backgroundColor = selectedValue === 'open' ? 'rgb(231, 252, 229)' : 'rgb(247, 220, 220)';
+
   }
 
   // Function to update ticket status in the backend
@@ -283,6 +332,9 @@ function displayTicketDetails(ticket) {
       throw new Error('Error updating ticket status');
     }
   }
+
+  document.getElementById('ticket-footer').innerHTML = `
+          TICKET ${ticket.ticket_id} IS UP TO DATE `;
 
   const ticketId = ticket.id; // Ensure correct ticketId is used
 
@@ -324,28 +376,30 @@ function displayTicketDetails(ticket) {
 
       // Add ticket activity (creation)
       accordionContainer.innerHTML += `
+      <div class="message-box">
         <div class="accordion">
-          <p>Ticket Created: ${formatDate(ticket.created_at)}</p>
-          <img src="../image/arrow.jpg" class="arrow" />
+          <p>Ticket Created: <span style="font-size: 14px; color: grey;">${formatDate(ticket.created_at)}</span></p>
         </div>
         <div class="panel">
           <p>${ticket.description}</p>
-        </div>`;
+        </div>
+        </div>
+        <p></p>`;
 
       // Add all the responses to the accordion
       responses.forEach(response => {
-        const sender = response.sender === 'admin' ? '<span style="color: green; font-size: 20px;">Admin Response</span>' : '<span style="color: blue; font-size: 20px;">User Message</span>' ;
+        const sender = response.sender === 'admin' ? '<span style=" color: green; font-size: 20px;">Admin Response</span>' : '<span style="color: #1E90FF; font-size: 20px;">User Message</span>' ;
         const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
         const dateTime = formatDate(response.created_at);
-        
+      
         accordionContainer.innerHTML += `
-          <div class="accordion">
-            <p>${sender} - <span style="font-size: 14px; color: grey;">${dateTime}</span></p>
-            <img src="../image/arrow.jpg" class="arrow" />
-          </div>
+        <div class="message-box">
+          <div class="accordion ${responseClass}"  > <p>${sender} - <span style="font-size: 14px; color: grey;">${dateTime}</span></p> </div>
           <div class="panel">
-            <p class="${responseClass}">${response.response}</p>
-          </div>`;
+            <p>${response.response}</p>
+          </div>
+        </div>
+        <p></p>`;
       });
 
       
@@ -400,22 +454,6 @@ function getToken() {
 }
 
 
-
-// Accordion toggle functionality
-function addAccordionFunctionality() {
-  const accordions = document.querySelectorAll('.accordion');
-  accordions.forEach(accordion => {
-    accordion.addEventListener('click', () => {
-      const panel = accordion.nextElementSibling;
-      accordion.classList.toggle('active');
-      if (panel.style.maxHeight) {
-        panel.style.maxHeight = null;
-      } else {
-        panel.style.maxHeight = panel.scrollHeight + 'px';
-      }
-    });
-  });
-}
 
 
 
@@ -528,6 +566,7 @@ async function fetchCustomers() {
       row.appendChild(createCell(customer.name));
       row.appendChild(createCell(customer.email));
       row.appendChild(createCell(customer.phone_number));
+      row.appendChild(createCell(customer.ticket_count));
       row.appendChild(createCell(new Date(customer.created_at).toLocaleDateString())); 
     
       const deleteBtn = document.querySelector('#deleteCustomersBtn');
@@ -541,7 +580,7 @@ async function fetchCustomers() {
     
         // write customer information in modal
         recupIdSubjecDiv.innerHTML = `
-          <p><strong style='font-size: 30px;'> ${customer.id  } ${customer.email}</strong></p>`;
+          <p><strong style='font-size: 30px; color: white;'> ${customer.id  })&nbsp;&nbsp;&nbsp; ${customer.email}</strong></p>`;
         boss1.innerHTML = `<p><b>${customer.name}</b></p>`;
         boss.innerHTML = `<p><b>${customer.project}</b></p>`;
     
