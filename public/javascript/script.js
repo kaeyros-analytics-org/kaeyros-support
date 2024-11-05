@@ -1,9 +1,10 @@
-// Modal and related DOM elements
+// Modal and DOM elements
 const modal = document.getElementById('myModal');
 const modal2 = document.getElementById('myModal2');
 const closeButton = document.getElementById('modalCloseBtn');
 
-// Page load initialization
+
+// Page load
 document.addEventListener('DOMContentLoaded', () => {
   const ticketForm = document.getElementById('ticketForm');
   const customersBtn = document.getElementById('customersBtn');
@@ -104,36 +105,42 @@ ticketForm.addEventListener('submit', async (event) => {
 });
 
 
-// Fetch and display user info in sidebar
+// Display user information in the sidebar
+// import jwtDecode from 'jwt-decode';
+
 async function displayUserInfo() {
-  const token = getToken();
-  if (!token) return;
+ const token = localStorage.getItem('token');
+ if (!token) return;
 
-  try {
-    const response = await fetch('/api/customers/profile', {
-      headers: { 'auth-token': token }
-    });
-    const data = await response.json();
+ try {
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.userId; // Assuming you store userId in the token
 
-    if (data.customer) {
-      const { name, email, phone_number, role } = data.customer;
-      if (role === 'admin') {
-        document.getElementById('admin-info').textContent = `Admin: ${name}`;
-        // Add additional admin-specific elements here
-      } else {
-        document.getElementById('asid-contact').innerHTML = `
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone_number}</p>
-        `;
-      }
+  // Fetch customer details using userId
+  const response = await fetch(`/api/customers/${customerId}`, { 
+   headers: { 'auth-token': token }
+  });
+
+  const customerData = await response.json(); 
+  const customerId = customerData.customer.id;
+
+    if (response.ok && data.customer) {
+      const { name, email, phone_number } = data.customer;
+      document.getElementById('customer-name').textContent = name;
+      document.getElementById('customer-email').textContent = email;
+      document.getElementById('customer-phone').textContent = phone_number;
+    } else {
+      console.error('Failed to load user information:', data.msg);
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
   }
 }
 
-displayUserInfo(); // Call this on page load
+// Call this function when the page loads
+window.addEventListener('DOMContentLoaded', displayUserInfo);
+
+
 
 
 // Fetch and display tickets
@@ -241,7 +248,7 @@ function displayTicketDetails(ticket) {
   const newSendMessageButton = document.getElementById('responseBtn');
 
   // Write ticket information in modal
-  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 22px; display: flex; color: white; gap: 60px;'> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
+  recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 22px; display: flex; color: white; '> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
   boss1.innerHTML = `<p>${ticket.type}</p>`;
   boss.innerHTML = `<p>${ticket.priority}</p>`;
 
@@ -253,14 +260,14 @@ function displayTicketDetails(ticket) {
   // Create the 'open' option
   const openOption = document.createElement("option");
   openOption.value = "open";
-  openOption.textContent = "open";
+  openOption.textContent = "Open";
   openOption.style.color = "green";
   openOption.style.backgroundcolor = "green";
 
   // Create the 'closed' option
   const closedOption = document.createElement("option");
   closedOption.value = "closed";
-  closedOption.textContent = "closed";
+  closedOption.textContent = "Closed";
   closedOption.style.color = "red";
 
   // Append the options to the dropdown
@@ -403,7 +410,6 @@ function displayTicketDetails(ticket) {
       });
 
       
-      addAccordionFunctionality();
     })
     .catch(err => {
       console.error('Failed to fetch responses:', err); 

@@ -147,15 +147,41 @@ router.get('/get-role', authenticate, (req, res) => {
 
 //user info in sidebar
 // Get customer by ID (no admin check)
-router.get('/:id', authenticate, (req, res) => {
-  const customerId = req.params.id;
-
-  const getCustomerByIdQuery = 'SELECT id, name, email, phone_number, project, created_at, role FROM customers WHERE id = ?';
-
-  db.query(getCustomerByIdQuery, [customerId], (err, results) => {
-    if (err) {
+router.get('/:id', authenticate, async (req, res) => {
+  // Get the user ID from the decoded token (assuming you store it in req.user.userId)
+  const userId = req.user.userId;
+ 
+  // Fetch customer details based on userId
+  const getCustomerQuery = 'SELECT id, name, email, phone_number FROM customers WHERE user_id = ?';
+  db.query(getCustomerQuery, [userId], (err, results) => {
+   if (err) {
       console.error('Error fetching customer by ID:', err);
       return res.status(500).json({ msg: 'Failed to retrieve customer.' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ msg: 'Customer not found.' });
+    }
+    
+    req.user.customerId = results[0].id; // Store the customer ID in req.user
+  const customerId = req.user.customerId;
+
+    res.status(200).json({ customer: results[0] });
+  });
+});
+
+
+
+// Updated /profile route
+router.get('/profile', authenticate, (req, res) => {
+  const customerId = req.customer_id;
+
+  const getCustomerProfileQuery = 'SELECT id, name, email, phone_number, role FROM customers WHERE id = ?';
+
+  db.query(getCustomerProfileQuery, [customerId], (err, results) => {
+    if (err) {
+      console.error('Error fetching profile data:', err);
+      return res.status(500).json({ msg: 'Error retrieving profile data' });
     }
 
     if (results.length === 0) {
@@ -164,17 +190,6 @@ router.get('/:id', authenticate, (req, res) => {
 
     res.status(200).json({ customer: results[0] });
   });
-});
-
-
-
-router.get('/profile', authenticate, async (req, res) => {
-  try {
-    const customer = await customer.findById(req.customer_id).select('name email phone_number role');
-    res.json({ user });
-  } catch (error) {
-    res.status(500).json({ msg: 'Error retrieving profile data' });
-  }
 });
 
 

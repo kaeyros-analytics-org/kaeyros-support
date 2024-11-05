@@ -145,7 +145,7 @@ body{
     font-size: 16px;
     padding: 20px 20px ;
     }
-     
+/*      
     .option-select{
     font-size: 20px;
     appearance: none;
@@ -154,7 +154,7 @@ body{
     background-color: rgb(243,245,247);
     margin: 20px;
     }
-     
+      */
      
     div.priorities {
     width: 100%;
@@ -342,6 +342,8 @@ body{
 
     .close {
         cursor: pointer;
+        font-size: 25px;
+        margin-left: 99%;
     }
      
     .ticket-header {
@@ -370,28 +372,30 @@ body{
     color: #28a745;
     }
     .selects{
-    border: 1px solid rgb(189, 187, 187);
-    width: 100%;
+    border: 0px solid #ddd;
+    margin-right: 10px;
+    width: 98%;
     height: 140px;
     border-radius: 15px;
     margin: 10px;
     }
     .recup-id-subjec{
-    border: 1px solid rgb(189, 187, 187);
+    border: 0px solid #ddd;
     background-color: #0F2A97;
     height: 34px;
     border-radius: 15px 15px 0px 0px;
-    padding: 5px 10px 15px 10px;
+    padding: 5px 5px 15px 20px;
      
     }
 
     #recup-id-subjec2 {
-    border: 1px solid rgb(189, 187, 187);
+    border: 0px solid #ddd;
     background-color: #0F2A97;
     height: 34px;
     border-radius: 15px 15px 0px 0px;
     padding: 0px 10px 25px 10px;
     }
+
     .type-priority{
     display: flex;
     justify-content: start;
@@ -407,7 +411,7 @@ body{
         border-radius: 0px 0px 15px 0px;
         }
     .recup-type-priority{
-    border: 1px solid rgb(189, 187, 187);
+    border: 0.5px solid #ddd;
     padding: 0px 20px;
     height: 84px;
     width: 100%;
@@ -625,6 +629,10 @@ body{
     width: 60%;
     height: 30px;
 }
+
+.select {
+    background-color: white;
+}
      
      
      
@@ -632,14 +640,28 @@ body{
 
  
 
-    @media screen and (max-width:500px) {
+    @media screen and (max-width:1300px) {
      
+    .sect{
+    display: flex;
+    flex-direction: column-reverse;
+    }
+
     .section-1{
-    display: none;
+        width: 20%;
     }
     .section-2{
     display: block;
      
+    }
+    .creat-tick{
+        margin-bottom: 30px;
+    }
+
+    .notification{
+        display: block;
+        width: 90%;
+        margin-bottom: 150px;
     }
      
     }

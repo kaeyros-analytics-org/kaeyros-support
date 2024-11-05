@@ -17,7 +17,7 @@ form.addEventListener('submit', async (event) => {
     const result = await response.json();
 
     if (response.ok) {
-        alert('Login successful!');
+        // alert('Login successful!');
         localStorage.setItem('token', result.token);  
         window.location.href = 'home.html';
         localStorage.setItem('customerId', result.customer.id);

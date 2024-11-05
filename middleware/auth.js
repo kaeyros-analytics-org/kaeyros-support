@@ -25,10 +25,20 @@ function authenticate(req, res, next) {
       req.role = results[0].role;
       next();
     });
+
   } catch (err) {
     console.error('Invalid token:', err);
     res.status(400).json({ msg: 'Invalid token.' });
   }
+
+  // try {
+  //   const decoded = jwt.verify(token, SECRET_KEY);
+  //   req.user = decoded;
+  //   next();
+  //  } catch (error) {
+  //   console.error('Authentication Error:', error);
+  //   return res.status(401).json({ msg: 'Invalid token.' });
+  //  }
 }
 
 module.exports = authenticate;
