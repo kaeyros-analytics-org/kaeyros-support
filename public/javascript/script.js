@@ -114,9 +114,8 @@ async function displayUserInfo() {
 
  try {
   const decodedToken = jwtDecode(token);
-  const userId = decodedToken.userId; // Assuming you store userId in the token
+  const userId = decodedToken.userId; 
 
-  // Fetch customer details using userId
   const response = await fetch(`/api/customers/${customerId}`, { 
    headers: { 'auth-token': token }
   });
@@ -202,10 +201,10 @@ async function fetchTickets() {
       }
       row.appendChild(unreadCell);
   
-      // Add other ticket data cells here
+      // reserved for notification
       tableBody.appendChild(row);
 
-      // When a row is clicked, show the modal and populate ticket data and responses
+      // When a row is clicked, show the modal
       row.addEventListener('click', function () {
         modal.style.display = 'flex';
         displayTicketDetails(ticket);
@@ -243,11 +242,9 @@ function displayTicketDetails(ticket) {
   const boss2 = document.querySelector('.boss2');
   const sendMessageButton = document.getElementById('responseBtn');
 
-  // Clear previous event listeners to avoid duplication
   sendMessageButton.replaceWith(sendMessageButton.cloneNode(true));
   const newSendMessageButton = document.getElementById('responseBtn');
 
-  // Write ticket information in modal
   recupIdSubjecDiv.innerHTML = `<p><strong style='font-size: 22px; display: flex; color: white; '> ${ticket.ticket_id}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ticket.subject}</strong></p>`;
   boss1.innerHTML = `<p>${ticket.type}</p>`;
   boss.innerHTML = `<p>${ticket.priority}</p>`;
@@ -257,14 +254,14 @@ function displayTicketDetails(ticket) {
   statusDropdown.name = "status";
   statusDropdown.classList.add("status-dropdown");
 
-  // Create the 'open' option
+  //'open' option
   const openOption = document.createElement("option");
   openOption.value = "open";
   openOption.textContent = "Open";
   openOption.style.color = "green";
   openOption.style.backgroundcolor = "green";
 
-  // Create the 'closed' option
+  //'closed' option
   const closedOption = document.createElement("option");
   closedOption.value = "closed";
   closedOption.textContent = "Closed";
@@ -274,21 +271,18 @@ function displayTicketDetails(ticket) {
   statusDropdown.appendChild(openOption);
   statusDropdown.appendChild(closedOption);
 
-  // Set the current status in the dropdown
   statusDropdown.value = ticket.status;
 
-  // Apply color styles based on the selected status
   updateDropdownColor(statusDropdown);
 
-  // Event listener for status change
   statusDropdown.addEventListener('change', async function () {
     const newStatus = statusDropdown.value;
 
     // Update the status in the backend
     try {
       await updateTicketStatus(ticket.id, newStatus);
-      ticket.status = newStatus; // Update local status
-      updateDropdownColor(statusDropdown); // Update color based on new status
+      ticket.status = newStatus; 
+      updateDropdownColor(statusDropdown); 
 
       // Update the status in the table without reloading the page
       const tableRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
@@ -305,7 +299,6 @@ function displayTicketDetails(ticket) {
     }
   });
 
-  // Clear previous status and append the dropdown
   boss2.innerHTML = '';
   boss2.appendChild(statusDropdown);
 
@@ -343,9 +336,11 @@ function displayTicketDetails(ticket) {
   document.getElementById('ticket-footer').innerHTML = `
           TICKET ${ticket.ticket_id} IS UP TO DATE `;
 
-  const ticketId = ticket.id; // Ensure correct ticketId is used
+  const ticketId = ticket.id; 
 
-  // Fetch ticket responses and display them
+
+
+  // Fetch ticket responses and display
   const token = getToken();
 
   fetch(`/api/responses/${ticketId}/responses`, {
@@ -362,14 +357,14 @@ function displayTicketDetails(ticket) {
       return response.json();
     })
     .then(responses => {
-      console.log('Received responses:', responses); // Log raw response data
+      console.log('Received responses:', responses); 
 
       if (!Array.isArray(responses)) {
         throw new TypeError('Expected an array of responses.');
       }
 
       const accordionContainer = document.querySelector('.accordion-container');
-      accordionContainer.innerHTML = ''; // Clear previous responses
+      accordionContainer.innerHTML = ''; 
 
       function formatDate(dateString) {
         const date = new Date(dateString);
@@ -381,7 +376,7 @@ function displayTicketDetails(ticket) {
         return `${day}/${month}/${year} ${time}`;
       }
 
-      // Add ticket activity (creation)
+      // ticket activity (creation)
       accordionContainer.innerHTML += `
       <div class="message-box">
         <div class="accordion">
@@ -393,7 +388,7 @@ function displayTicketDetails(ticket) {
         </div>
         <p></p>`;
 
-      // Add all the responses to the accordion
+      // Add all the responses to the message box
       responses.forEach(response => {
         const sender = response.sender === 'admin' ? '<span style=" color: green; font-size: 20px;">Admin Response</span>' : '<span style="color: #1E90FF; font-size: 20px;">User Message</span>' ;
         const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
@@ -426,10 +421,9 @@ newSendMessageButton.addEventListener('click', function () {
     return;
   }
 
-
   const payload = {
     response: responseContent,
-    images: null // Image uploading can be added later
+    images: null // Image uploading 
   };
 
   const token = getToken();
@@ -475,7 +469,6 @@ window.onclick = function (event) {
   }
 };
 
-// Utility: Get token from local storage
 function getToken() {
   return localStorage.getItem('token');
 }
@@ -685,57 +678,3 @@ function addDeleteButtonListener(deleteCustomersBtn) {
 const deleteBtn = document.querySelector('#deleteCustomersBtn');
 addDeleteButtonListener(deleteBtn);
 
-
-
-
-// // Fetch and display the customer's information in the sidebar
-// function getCustomerId() {
-//   return localStorage.getItem('customerId');
-// }
-
-// function getToken() {
-//   return localStorage.getItem('token');
-// }
-
-// // Fetch and display the customer's information in the sidebar
-// async function fetchCustomerInfo() {
-//   try {
-//     const token = getToken();
-//     if (!token) {
-//       alert("No token provided. Please log in.");
-//       return;
-//     }
-
-//     const customerId = getCustomerId(); 
-//     console.log('Customer ID for fetch:', customerId); // Debugging log
-
-//     if (!customerId) {
-//       alert("Customer ID is null. Please log in again.");
-//       return;
-//     }
-
-//     const response = await fetch(`/api/customers/${customerId}`, {
-//       headers: {
-//         'auth-token': token 
-//       }
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch customer information');
-//     }
-
-//     const result = await response.json();
-//     const customer = result.customer; // Assuming the endpoint returns the customer object as `customer`
-
-//     // Update the sidebar with customer information
-//     document.getElementById('customer-name').textContent = customer.name;
-//     document.getElementById('customer-email').textContent = customer.email;
-//     document.getElementById('customer-phone').textContent = customer.phone_number;
-//   } catch (error) {
-//     console.error('Error fetching customer information:', error);
-//     alert('An error occurred while retrieving your information.');
-//   }
-// }
-
-// // Call the function to fetch customer information when the page loads
-// fetchCustomerInfo();

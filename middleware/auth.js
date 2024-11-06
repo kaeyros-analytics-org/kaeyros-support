@@ -16,7 +16,7 @@ function authenticate(req, res, next) {
     db.query('SELECT role FROM customers WHERE id = ?', [req.customer_id], (err, results) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Failed to retrieve user role.' });
+        return res.status(500).json({ error: 'Failed to retrieve user role..' });
       }
       if (results.length === 0) {
         return res.status(404).json({ error: 'User not found.' });

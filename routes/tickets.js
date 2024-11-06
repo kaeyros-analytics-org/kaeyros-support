@@ -21,10 +21,10 @@ router.post('/create', authenticate, (req, res) => {
       return res.status(500).json({ error: 'Failed to create ticket.' });
     }
 
-    const ticketCount = result[0].count + 1;  // Get the ticket count + 1 for new ticket
-    const formattedTicketId = `${project}#${String(ticketCount).padStart(4, '0')}`; // Generate ID like "ProjectName#000X"
+    const ticketCount = result[0].count + 1;  // ticket count
+    const formattedTicketId = `${project}#${String(ticketCount).padStart(4, '0')}`; // id personalisation 
 
-    console.log('Generated Ticket ID:', formattedTicketId);  // Log the generated ID
+    console.log('Generated Ticket ID:', formattedTicketId);  
 
     const insertQuery = `
       INSERT INTO tickets (customer_id, project, subject, type, description, priority, ticket_id)
@@ -35,7 +35,7 @@ router.post('/create', authenticate, (req, res) => {
         console.error('Error inserting ticket:', err);
         return res.status(500).json({ error: 'Failed to create ticket.' });
       }
-      console.log('Ticket created successfully with ID:', formattedTicketId);  // Log successful insertion
+      console.log('Ticket created successfully with ID:', formattedTicketId);
       res.status(201).json({ msg: 'Ticket created successfully.', ticketId: formattedTicketId });
     });
   });
@@ -124,7 +124,7 @@ router.delete('/:id', authenticate, (req, res) => {
   db.query(query, queryParams, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Failed to delete ticket.' });
+      return res.status(500).json({ error: 'Failed to delete ticket..' });
     }
     res.status(200).json({ msg: 'Ticket deleted successfully.' });
   });

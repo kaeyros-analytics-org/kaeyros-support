@@ -10,7 +10,7 @@ router.post('/register', async (req, res) => {
   const { name, email, phone_number, project, password } = req.body;
 
   if (!name || !email || !phone_number || !password) {
-    return res.status(400).json({ msg: 'Please fill all the fields.' });
+    return res.status(400).json({ msg: 'Please fill all the fields..' });
   }
 
   // Check email
@@ -146,12 +146,10 @@ router.get('/get-role', authenticate, (req, res) => {
 
 
 //user info in sidebar
-// Get customer by ID (no admin check)
 router.get('/:id', authenticate, async (req, res) => {
-  // Get the user ID from the decoded token (assuming you store it in req.user.userId)
   const userId = req.user.userId;
  
-  // Fetch customer details based on userId
+  
   const getCustomerQuery = 'SELECT id, name, email, phone_number FROM customers WHERE user_id = ?';
   db.query(getCustomerQuery, [userId], (err, results) => {
    if (err) {
@@ -162,8 +160,8 @@ router.get('/:id', authenticate, async (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ msg: 'Customer not found.' });
     }
-    
-    req.user.customerId = results[0].id; // Store the customer ID in req.user
+
+    req.user.customerId = results[0].id; 
   const customerId = req.user.customerId;
 
     res.status(200).json({ customer: results[0] });
