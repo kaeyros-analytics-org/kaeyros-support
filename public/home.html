@@ -3,407 +3,460 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../style/style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-    <title>Document</title>
+    <title>Kaeyros Support Ticket System</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <section class="big-section">
-      <section class="section-1">
-        <div class="logo">
-          <div>
-            <img class="logo-img" src="../image/ap-logo.png" alt="Logo" />
+    <header>
+      <div class="logo-area">
+        <img src="./images/ap-logo.png" alt="Logo" class="logo" />
+      </div>
+      <div
+        id="admin-header"
+        class="menu-section hidden"
+        style="color: black; padding-bottom: 10px"
+      >
+        Welcome Admin
+        <div id="admin-name"></div>
+      </div>
+      <div class="header-right">
+        <select id="language-select">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+        <a class="logout" id="logout" href="./index.html">Logout</a>
+      </div>
+    </header>
+
+    <aside id="sidebar">
+      <div id="admin-menu" class="menu-section hidden">
+        <button class="menu-btn active" data-target="dashboard">
+          Dashboard
+        </button>
+        <button class="menu-btn" data-target="tickets-section">Tickets</button>
+        <button class="menu-btn" data-target="customers-section">
+          Customers
+        </button>
+        <button class="menu-btn" data-target="Settings">Settings</button>
+      </div>
+
+      <div id="user-menu" class="menu-section hidden">
+        <div class="profile">
+          <img src="" alt="User Profile" id="profile-pic" />
+          <p id="user-name">User Name</p>
+          <p id="user-project">Project</p>
+        </div>
+        <button class="menu-btn active">Tickets</button>
+        <button class="menu-btn" data-target="Stats">Stats</button>
+      </div>
+    </aside>
+
+    <main id="content">
+      <div class="page active" id="dashboard" style="display: none">
+        <!-- Top Row: Ticket Stats -->
+        <div class="stat-box-row">
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Total Tickets</h3>
+              <p id="total-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="total-tickets-chart"></canvas>
+            </div>
           </div>
-          <div>
-            <p><b>Kaeyros</b> <br />Analytics</p>
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Open Tickets</h3>
+              <p id="open-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="open-tickets-chart"></canvas>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Closed Tickets</h3>
+              <p id="closed-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="closed-tickets-chart"></canvas>
+            </div>
           </div>
         </div>
-        <hr />
-        <div class="asid-contact">
-          <div class="asid-contacts">
-            <b>Your Information</b>
+
+        <div class="additional-stats">
+          <div class="additional-stat">
+            <h3>Tickets by Department</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="tickets-department-chart"></canvas>
+              </div>
+              <div class="stat-right" id="tickets-department-labels"></div>
+            </div>
           </div>
-          <div class="asid-contat" id="asid-contact">
-            <div class="flexs">
-              <img src="../image/phone.png" class="image" alt="phone" />
-              <p>Name: <span style="color: brown;"></span><div id="customer-name">Loading...</div></span></p>
+          <div class="additional-stat">
+            <h3>Tickets by Type</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="tickets-type-chart"></canvas>
+              </div>
+              <div class="stat-right" id="tickets-type-labels"></div>
             </div>
-            <div class="flexs">
-              <img src="../image/email.png" class="image" alt="email" />
-              <p>Email: <span id="customer-email">Loading...</span></p>
+          </div>
+          <div class="additional-stat">
+            <h3>Top Ticket Creators</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="top-creators-chart"></canvas>
+              </div>
+              <div class="stat-right" id="top-creators-labels"></div>
             </div>
-            <div class="flexs">
-              <img src="../image/phone.png" class="image" alt="phone" />
-              <p>Phone Number: <span id="customer-phone">Loading...</span></p>
+          </div>
+          <div class="additional-stat">
+            <div>
+              <h4>Number of Customers</h4>
+              <p id="num-customers">0</p>
             </div>
           </div>
         </div>
+      </div>
+
+      <section class="page" id="tickets-section" style="display: none">
+        <!-- Button to create a new ticket -->
+        <button class="create-btn" id="create-ticket-btn">
+          Create a New Ticket
+        </button>
+
+        <!-- Filter options -->
+        <div id="ticket-filters">
+          <label>
+            Status:
+            <select id="status-filter">
+              <option value="">All</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+          <!-- Additional filters for date, priority, and project -->
+        </div>
+
+        <!-- Tickets Table -->
+        <h3 id="ticketsListTitle" style="display: none">Tickets List:</h3>
+        <table class="tickets-table" id="ticketsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Project</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </section>
 
-      <section class="section-2">
-        <header>
-          <div class="logout">
-            <button class="customersBtn" id="customersBtn" type="submit">
-              See all customers
-            </button>
-            <button
-              class="ticketsBtn"
-              id="ticketsBtn"
-              type="submit"
-              style="display: none"
-            >
-              See all tickets
-            </button>
-            <button class="boutonn" type="submit">
-              <a href="./index.html">Logout</a>
-            </button>
-          </div>
-        </header>
+      <!-- Ticket Details Modal -->
+      <!-- Ticket Details Modal -->
+      <div id="ticket-modal" class="modal">
+        <div class="modal-content">
+          <button id="close-modal">X</button>
+          <!-- Ticket Details Box -->
+          <h2 class="preview">Ticket Preview</h2>
+          <div id="ticket-details-box">
+            <div id="ticket-top">
+              <span id="ticket-id-subject"></span>
+            </div>
+            <div id="ticket-bottom">
+              <div class="ticket-info-a">
+                <strong>Type:</strong> <span id="ticket-type"></span>
+              </div>
+              <div class="ticket-info-b">
+                <b>Priority:</b> <span id="ticket-priority"></span>
+              </div>
+              <div class="ticket-info-c">
+                <b>Status:</b>
+                <div class="ticket-status"></div>
+              </div>
+            </div>
 
-        <div class="sect">
-          <div class="creat-tick">
-            <form id="ticketForm" action="/create" method="POST">
-              <div class="titre">
-                <h1>Kaeyros <span style="color: #0f2a97">Support</span></h1>
-                <br />
-                <h1>
-                  <span style="color: rgb(87, 86, 86); font-size: 30px"
-                    >Create a new ticket</span
-                  >
-                </h1>
+            <div class="info-below">
+              <div class="ticket-info-a">
+                <b>Department:</b> <span id="ticket-department"></span>
               </div>
-              <div>
-                <label for="project"><h2>Project</h2></label>
-                <input
-                  type="text"
-                  class="focuss"
-                  name="project"
-                  id="project"
-                  placeholder="Which project has a problem"
-                />
+              <div class="ticket-assigned">
+                <label><b>Assigned To:</b></label>
+                <span id="ticket-assigned-display"></span>
+                <select id="ticket-assigned-select" style="display: none">
+                  <option value="Unassigned">Unassigned</option>
+                  <option value="Engineer 1">Engineer 1</option>
+                  <option value="Engineer 2">Engineer 2</option>
+                </select>
               </div>
-              <br />
-              <div>
-                <label for="subject"><h2>Subject</h2></label>
-                <input
-                  type="text"
-                  class="focuss"
-                  id="subject"
-                  placeholder="What is the difficulty"
-                />
-              </div>
-              <div class="priorities">
-                <h2>Priority</h2>
-                <div class="flex">
-                  <div class="radio focuss">
-                    <input
-                      type="radio"
-                      name="priority"
-                      id="priority"
-                      value="Low"
-                    />
-                    <label>Low</label>
-                  </div>
-                  <div class="radio focuss">
-                    <input
-                      type="radio"
-                      name="priority"
-                      id="priority"
-                      value="Medium"
-                    />
-                    <label>Medium</label>
-                  </div>
-                  <div class="radio focuss">
-                    <input
-                      type="radio"
-                      name="priority"
-                      id="priority"
-                      value="High"
-                    />
-                    <label>High</label>
-                  </div>
-                </div>
-              </div>
-              <div class="incident">
-                <div class="incidents"><h2>Ticket Type</h2></div>
-                <div>
-                  <select name="ticketType" id="type" class="selecte focuss">
-                    <option value="Incident">Incident</option>
-                    <option value="Problem">Problem</option>
-                    <option value="Question">Question</option>
-                    <option value="Suggestion">Suggestion</option>
-                  </select>
-                </div>
-              </div>
-              <div class="tag">
-                <div><h2>Description</h2></div>
-                <div>
-                  <textarea
-                    name="description"
-                    class="focuss"
-                    id="description"
-                    placeholder="Describe your problem"
-                  ></textarea>
-                </div>
-              </div>
-              <div>
-                <button class="bouton" type="submit" id="submitBtn">
-                  Envoyer
-                </button>
-              </div>
-            </form>
-
-            <form id="customerForm" action="/register" method="POST">
-              <div class="titre">
-                <h1>Kaeyros <span style="color: #0f2a97">Support</span></h1>
-                <br />
-                <h1>
-                  <span style="color: rgb(87, 86, 86); font-size: 30px"
-                    >Register a new user</span
-                  >
-                </h1>
-              </div>
-              <div>
-                <label for="name"><h2>Name</h2></label>
-                <input
-                  type="text"
-                  class="focuss"
-                  name="name"
-                  id="name"
-                  placeholder="veiller saisire le nom du client"
-                />
-              </div>
-              <div>
-                <label for="email"><h2>Email</h2></label>
-                <input
-                  type="email"
-                  class="focuss"
-                  name="email"
-                  id="email"
-                  placeholder="veillez saisire le mail du client"
-                />
-              </div>
-
-              <div>
-                <label for="password"><h2>Password</h2></label>
-                <input
-                  type="password"
-                  class="focuss"
-                  name="password"
-                  id="password"
-                  placeholder="Entrez le Password d'utilisateur"
-                />
-              </div>
-              <div>
-                <label for="phone-number"><h2>Phone Number</h2></label>
-                <input
-                  type="number"
-                  class="focuss"
-                  name="phone_number"
-                  id="phone_number"
-                  placeholder="Entrez le numero de telephone du client"
-                />
-              </div>
-
-              <div class="incident">
-                <div class="incidents"><h2>project</h2></div>
-                <div>
-                  <select name="project" id="project1" class="selecte focuss">
-                    <option value="SEMA">SEMA</option>
-                    <option value="SWIVY">SWIVY</option>
-                    <option value="AIR-O">AIR-O</option>
-                    <option value="K-SHAP">K-SHAP</option>
-                    <option value="INVY">INVY</option>
-                    <option value="VAANAH">VAANAH</option>
-                    <option value="EZE">EZE</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <button class="bouton" type="submit" id="submitBtn">
-                  create user
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
 
-          <div class="notification">
-            <div class="box-container" id="boxContainer">
-              <div class="box">TICKETS: <span id="ticketCount">0</span></div>
-              <div class="box">
-                TICKETS OPEN: <span id="openTicketCount">0</span>
+          <!-- Ticket Activity Section -->
+          <h2 class="activity">Ticket Activity</h2>
+          <div class="ticket-activity"></div>
+
+          <!-- Responses Section -->
+          <label for="response-input">Message</label>
+          <textarea
+            name="response"
+            id="response"
+            placeholder="Send a message"
+            rows="3"
+          ></textarea>
+          <button class="responseBtn" id="send-response" type="submit">
+            <b>Send Response</b>
+          </button>
+          <div class="ticket-footer" id="ticket-footer"></div>
+        </div>
+      </div>
+
+      <!-- Create Ticket Form -->
+      <section id="create-ticket-section" style="display: none">
+        <form id="ticketForm">
+          <div class="form-group">
+            <label for="project">Project:</label>
+            <input
+              type="text"
+              name="project"
+              id="project"
+              placeholder="Enter Project Name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input
+              type="text"
+              name="subject"
+              id="subject"
+              placeholder="Enter Subject"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="type">Ticket Type:</label>
+            <select name="type" id="type" required>
+              <option value="">Select Type</option>
+              <option value="Bug">Bug</option>
+              <option value="Feature Request">Feature Request</option>
+              <option value="Support Request">Support Request</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea
+              name="description"
+              id="description"
+              placeholder="Describe the issue"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">Priority:</label>
+            <div class="priority-options">
+              <div class="option">
+                <input type="radio" name="priority" id="priority" value="Low" />
+                <label>Low</label>
               </div>
-              <div class="box">
-                TICKETS CLOSED:
-                <span id="processedTicketCount">0</span>
+              <div class="option">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="priority"
+                  value="Medium"
+                />
+                <label>Medium</label>
               </div>
-            </div>
-            <div
-              class="ticketsTableContainer"
-              id="ticketsTableContainer"
-              style="display: block"
-            >
-              <h3 id="ticketsListTitle" style="display: none">Tickets List:</h3>
-              <table class="tickets-table" id="ticketsTable">
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Projet</th>
-                    <th>Subject</th>
-                    <th>Priority</th>
-                    <th>Ticket Type</th>
-                    <th>date</th>
-                    <th>status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- tickets data will be appended here -->
-                </tbody>
-              </table>
-              <div id="myModal" class="modal">
-                <div class="modal-content">
-                  <span class="close" id="modalCloseBtn">&times;</span>
-                  <div class="ticket-preview">
-                    <div class="ticket-header">
-                      <h2>Ticket preview</h2>
-                      <!-- <button>View Full Details</button> -->
-                    </div>
-
-                    <div class="selects">
-                      <div class="recup-id-subjec">
-                        <div class="ID">
-                          <strong id="ID"></strong
-                          ><strong id="sujet"></strong>
-                          
-                        </div>
-                        <div>
-                          <button type="submit" class="open">Open</button>
-                        </div>
-                      </div>
-                      <div class="type-priority">
-                        <div class="recup-type-priority recup-type-priority-1">
-                          <div class="base">
-                            <p><strong>Ticket type</strong></p>
-                          </div>
-                          <div class="boss1">
-                            <p></p>
-                          </div>
-                        </div>
-                        <div class="recup-type-priority recup-type-priority-2">
-                          <div class="base">
-                            <p><strong>Priority</strong></p>
-                          </div>
-                          <div class="boss">
-                            <p></p>
-                          </div>
-                        </div>
-                        <div class="recup-type-priority recup-type-priority-3">
-                          <div class="base">
-                            <p><strong>Status</strong></p>
-                          </div>
-                          <div class="boss2">
-                            <p></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <div><p></p></div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div class="activity"><h1>Ticket activity</h1></div>
-                      <div class="accordion-container">
-                       
-                      </div>
-                    </div>
-                    <div><h2>Message</h2></div>
-                    <div>
-                      <textarea
-                        name="response" class="focuss" id="response" placeholder="Send a message">
-                    </textarea>
-                    <button class="responseBtn" id="responseBtn" type="submit">Send message</button>
-                    </div>
-                  </div>
-                    <div class="ticket-footer" id="ticket-footer">TICKET ... IS UP TO DATE</div>
-                  </div>
-                </div>
-              </div>
-
-
-              <div
-              class="customersTableContainer"
-              id="customersTableContainer"
-              style="display: none"
-            >
-              <h3 id="customersListTitle" style="display: block">
-                Customers List:
-              </h3>
-              <table class="customers-table" id="customersTable">
-                <thead>
-                  <tr id=".tr1">
-                    <th>Id</th>
-                    <th>Project</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Number of Tickets</th>
-                    <th>Creation date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- customers data will be appended here -->
-                </tbody>
-              </table>
-              <div id="myModal2" class="modal">
-                <div class="modal-content">
-                  <span class="close" id="modalCloseBtn">&times;</span>
-                  <div class="ticket-preview">
-                    <div class="ticket-header">
-                      <h2>Customer View</h2>
-                      <button>View Full Details</button>
-                    </div>
-
-                    <div class="selects">
-                      <div class="recup-id-subjec2" id="recup-id-subjec2"></div>
-                      <div class="type-priority">
-                        <div class="recup-type-priority recup-type-priority-1">
-                          <div class="base">
-                            <p>Name</p>
-                          </div>
-                          <div class="boss1" id="boss12"></div>
-                        </div>
-                        <div class="recup-type-priority recup-type-priority-2">
-                          <div class="base">
-                            <p>project</p>
-                          </div>
-                          <div class="boss" id="boss2"></div>
-                        </div>
-                        <div></div>
-                      </div>
-                    </div>
-
-                    <button class="deleteBtn"id="deleteCustomersBtn"type="submit">Delete customer</button>
-
-                    <div class="ticket-footer">CUSTOMER .. HAS BEEN UPDATED</div>
-                  </div>
-                </div>
+              <div class="option">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="priority"
+                  value="High"
+                />
+                <label>High</label>
               </div>
             </div>
+            <input type="hidden" name="priority" id="priority" value="" />
+          </div>
 
+          <div class="form-group">
+            <label for="department">Department:</label>
+            <select name="department" id="department" required>
+              <option value="">Select Department</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Sales">Sales</option>
+              <option value="Support">Support</option>
+            </select>
+          </div>
+
+          <button class="createTicket" type="submit" id="submitTicket">
+            Create Ticket
+          </button>
+        </form>
+      </section>
+
+      <section class="page" id="customers-section" style="display: none">
+        <button class="create-btn" id="create-customer-btn">
+          Register a New Customer
+        </button>
+
+        <!-- Filter options -->
+        <div id="customer-filters">
+          <label>
+            Role:
+            <select id="role-filter">
+              <option value="">All</option>
+              <option value="open">Admin</option>
+              <option value="closed">Users</option>
+            </select>
+          </label>
+          <!-- Additional filters for date, priority, and project -->
+        </div>
+        <h3 id="customersListTitle" style="display: block">Customers List:</h3>
+        <table class="customers-table" id="customersTable">
+          <thead>
+            <tr id=".tr1">
+              <!-- <th>Id</th> -->
+              <th>Project</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>City</th>
+              <th>Number of Tickets</th>
+              <!-- <th>Creation date</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <!-- customers data will be appended here -->
+          </tbody>
+        </table>
+      </section>
+
+      <div id="customer-modal" class="modal">
+        <div class="modal-content">
+          <button id="close-modal1">X</button>
+          <!-- Ticket Details Box -->
+          <h2 class="details">Customer Details</h2>
+          <div id="ticket-details-box">
+            <div id="ticket-top">
+              <span id="customer-id-name"></span>
             </div>
+            <div id="customer-bottom">
+              <div class="customer-info-a">
+                <b>Email:</b> <span id="customer-email"></span>
+              </div>
+              <div class="customer-info-b">
+                <b>Project:</b> <span id="customer-project"></span>
+              </div>
+              <div class="customer-info-c">
+                <b>Phone Number:</b>
+                <div id="customer-phone"></div>
+              </div>
+            </div>
+          </div>
+          <div class="info-below">
+            <div class="ticket-info1">
+              <b>Country:</b> <span id="customer-country"></span>
+            </div>
+            <div class="ticket-info1">
+              <b>City:</b> <span id="customer-city"></span>
+            </div>
+          </div>
+          <button class="deleteBtn" id="deleteCustomersBtn" type="submit">
+            Delete customer
+          </button>
 
+          <div class="ticket-footer" id="customer-footer">
+            CUSTOMER .. HAS BEEN UPDATED
           </div>
         </div>
-      </section>
-    </section>
+      </div>
 
-    <script src="../javascript/script.js"></script>
+      <!-- Register customer Form -->
+      <section id="create-customer-section" style="display: none">
+        <form id="customerForm">
+          <div class="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              name="project"
+              id="name"
+              placeholder="Enter username"
+            />
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter email"
+            />
+          </div>
+          <div class="form-group">
+            <label>Phone Number:</label>
+            <input
+              type="number"
+              name="phone_number"
+              id="phone_number"
+              placeholder="Enter phone_number"
+            />
+          </div>
+          <div class="form-group">
+            <label>Project:</label>
+            <input
+              type="text"
+              name="project"
+              id="project1"
+              placeholder="Enter project"
+            />
+          </div>
+          <div class="form-group">
+            <label for="type">Country:</label>
+            <select name="country" id="country" required>
+              <option value="Cameroon">Cameroon</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>City:</label>
+
+            <input type="text" name="city" id="city" placeholder="Enter city" />
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter password"
+            />
+          </div>
+
+          <button class="registerCustomer" type="submit" id="registerCustomer">
+            Register Customer
+          </button>
+        </form>
+      </section>
+
+      <section class="page" id="stats-section" style="display: none"></section>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-labels@1.2.0/dist/chartjs-plugin-labels.min.js"></script>
   </body>
 </html>

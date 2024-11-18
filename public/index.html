@@ -3,63 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../style/login.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-    />
-    <title>login_page</title>
+    <title>Login - Kaeyros S.T.S</title>
+    <link rel="stylesheet" href="login.css" />
   </head>
   <body>
-    <section class="big-container">
-      <div class="container">
-        <div class="container-left">
-          <div>
-            <div class="title"><h1>Log in Kaeyros S.T.S</h1></div>
-            <form id="loginForm" action="/login" method="POST">
-              <div class="inputs">
-                <label for="email">Email</label><br />
-                <input type="email" id="email" placeholder="Enter your email" />
-              </div>
-              <div class="inputs">
-                <label for="password">Password</label><br />
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="Enter your password"
-                />
-              </div>
-              <div class="inputs">
-                <p>have you forgotten your <a href="">password?</a></p>
-              </div>
-              <div class="inputs bouton">
-                <button type="submit" id="submitBtn">Login</button>
-              </div>
-            </form>
-            <div class="or">
-              <div><hr /></div>
-              <div>or</div>
-              <div><hr /></div>
-            </div>
-            <div class="google">
-              <img src="../image/google.png" alt="icone-google" />
-              <p><a href="#">Sign in with google </a></p>
-            </div>
+    <div class="container">
+      <!-- Left Side -->
+      <div class="left">
+        <h1>Log in Kaeyros S.T.S</h1>
+        <form id="loginForm" action="/login" method="POST">
+          <div class="input-container">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
           </div>
-        </div>
-        <div class="container-rigth">
-          <div class="blog-rigth">
-            <h1>
-              Here on this digital<br />
-              platform all the <br />problems of our <br />
-              partners will be solved
-            </h1>
+          <div class="input-container">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
           </div>
+          <p class="forgot-password">Have you forgotten your password?</p>
+          <button type="submit" class="login-button" id="loginBtn">
+            Log in
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <div class="right-inner-container">
+          <h2>
+            Here on this digital platform all the problems of our partners will
+            be solved
+          </h2>
         </div>
       </div>
-    </section>
+    </div>
   </body>
-  <script src="../javascript/login.js"></script>
 </html>
+<script src="login.js"></script>

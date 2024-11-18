@@ -14,7 +14,7 @@ router.post('/:ticketId/responses', authenticate, (req, res) => {
     }
   
     const query = `
-        INSERT INTO responses (ticket_id, sender, response, images)
+        INSERT INTO responses (ticket_id, sender, response, image)
         VALUES (?, ?, ?, ?)
     `;
     db.query(query, [ticket_id, sender, response, images || null], (err, result) => {
@@ -43,5 +43,24 @@ router.post('/:ticketId/responses', authenticate, (req, res) => {
   });
   
   
+  router.get('/latest-timestamp/:ticketId', (req, res) => {
+    const { ticketId } = req.params;
+    db.query(`
+     SELECT MAX(created_at) as latest_response
+     FROM responses
+     WHERE ticket_id = ?
+    `, [ticketId], (err, result) => {
+     if (err) {
+      console.error('Error fetching latest response timestamp:', err);
+      res.status(500).json({ error: 'Failed to fetch latest response timestamp' });
+      return;
+     }
+     if (result.length > 0) {
+      res.json(result[0].latest_response); 
+     } else {
+      res.json(null); 
+     }
+    });
+   });
   
   module.exports = router;
