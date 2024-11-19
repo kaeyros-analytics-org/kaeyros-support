@@ -8,7 +8,7 @@ const authenticate = require('../middleware/auth');
 
 // Register a new customer
 router.post('/register', async (req, res) => {
-  const { name, email, phone_number, project, country, city, password, role } = req.body;
+  const { name, email, phone_number, project, country, city, image, password, role } = req.body;
 
   if (!name || !email || !phone_number || !password) {
     return res.status(400).json({ msg: 'Please fill all the required fields.' });
@@ -24,10 +24,10 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const insertQuery = `
-      INSERT INTO customers (name, email, phone_number, project, country, city, password, role)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO customers (name, email, phone_number, project, country, city, image, password, role)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    db.query(insertQuery, [name, email, phone_number, project, country, city, hashedPassword, role], (err) => {
+    db.query(insertQuery, [name, email, phone_number, project, country, city, image, hashedPassword, role], (err) => {
       if (err) return res.status(500).json({ error: 'Failed to register customer.' });
       res.status(201).json({ msg: 'Customer registered successfully.' });
     });

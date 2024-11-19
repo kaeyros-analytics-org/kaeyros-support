@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: "Archivo Narrow", sans-serif;
+    font-family: sans-serif, "Archivo Narrow";
     font-optical-sizing: auto;
     font-weight: weight;
     font-style: normal;
@@ -28,17 +28,24 @@ header {
 }
 
 .logo {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 50px;
+}
+
+#admin-header {
+  width: 35%;
 }
 
 .header-right{
     width: 30%;
+    display: flex;
+    flex-direction: row;
 }
 
 #language-select {
     margin-left: 40px;
     width: 80px;
+    border-radius: 10px;
 }
 
 
@@ -132,12 +139,14 @@ main#content {
 }
 
 .stat-box {
-  padding: 30px;
+  padding: 30px;  
   background-color: #c6e0fa;
   display: flex;
   align-items: center;
   width: 30%;
   border-radius: 5px;
+  border-left: 3px solid blue;
+  box-shadow: 1px 1px 5px;
 }
 
 .stat-left {
@@ -171,7 +180,8 @@ main#content {
   padding: 10px;
   background-color: #EFF3F7;
   align-items: center;
-  width: 30%;
+  width: 32%;
+  min-width: 250px;
 }
 
 .stat-left1 canvas {
@@ -197,6 +207,15 @@ main#content {
   width: 10px;
   height: 10px;
   margin-right: 8px;
+}
+
+
+
+.ticket-filters {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
 }
 
 
@@ -264,7 +283,20 @@ main#content {
       cursor: pointer;
       }
 
+    .back-btn {
+      background: none;
+      background-color: rgb(251, 245, 245);
+      border: none;
+      margin-bottom: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s, font-size 0.2s;
+    }
 
+    .back-btn:hover {
+      font-size: 14px;
+      color: blue;
+    }
 
 
     .ticket-form-container {
@@ -391,7 +423,7 @@ main#content {
       #ticket-details-box {
         margin-bottom: 20px;
         border: 1px solid #ddd;
-        /* padding: 10px; */
+        height: auto;
         border-radius: 10px;
       }
       
@@ -438,13 +470,6 @@ main#content {
         width: 100%;
       }
 
-      .ticket-info-a {
-        border-bottom-left-radius: 10px;
-      }
-
-      .ticket-info-c {
-        border-bottom-right-radius: 10px;
-      }
 
       .customer-info-c {
         border-bottom-right-radius: 10px;
@@ -455,33 +480,75 @@ main#content {
         /* border: 1px dashed black; */
         border-radius: 10px;
         margin-top: 0;
-        padding: 2px;
+        padding: 2px 10px;
         width: 60%;
         height: 30px;
-        border: none;
+        border: 1px solid grey;
+        outline: none;
     }
 
     .status-option {
       background-color: white;
       border-radius: 10px;
+      cursor: pointer;
     }
+
 
       .info-below {
         display: flex;
         flex-direction: row;
-        gap: 60px;
+        background-color: #f5f5f5;
+        padding: 0px;
+        border-radius: 0 0 10px 10px;
       }
 
-      .ticket-info1, .ticket-assigned {
+      .customer-info-below {
+        display: flex;
+        flex-direction: row;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+      }
+
+      .customer-info1, .customer-info2 {
+        width: 50%;
+        border: 1px solid rgb(211, 205, 205);
+        padding: 12px;
+      }
+
+      .customer-info1 {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+
+      .customer-info2 {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+      .ticket-info-d, .ticket-assigned {
+        border: 1px solid rgb(211, 205, 205);
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        padding: 10px 5px 10px 20px;
+        width: 50%;
+      }
+
+      .ticket-info-d {
+        border-bottom-left-radius: 10px;
+      }
+
+      .ticket-assigned {
+        border-bottom-right-radius: 10px;
       }
 
       #ticket-assigned-select {
         margin-top: 0;
-        width: 100%;
+        width: 37%;
         height: 25px;
         padding: 1px;
+        border: none;
+        outline: none;
       }
       
       #ticket-activity {
@@ -546,7 +613,7 @@ main#content {
        }
       
        .activity-date {
-        font-size:14px;
+        font-size:11px;
         color: grey;
        }
       

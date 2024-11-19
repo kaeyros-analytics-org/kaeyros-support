@@ -62,5 +62,17 @@ router.post('/:ticketId/responses', authenticate, (req, res) => {
      }
     });
    });
+
+
+   router.get('count/:ticketId', authenticate, (req, res) => {
+    const ticketId = req.params.ticketId;
+    db.query(`SELECT COUNT(*) as count FROM responses WHERE ticket_id = ?`, [ticketId], (err, results) => {
+     if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to count responses' });
+     }
+     res.json({ count: results[0].count });
+    });
+   });
   
   module.exports = router;

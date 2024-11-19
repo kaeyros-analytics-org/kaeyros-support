@@ -128,13 +128,22 @@
         </button>
 
         <!-- Filter options -->
-        <div id="ticket-filters">
+        <div class="ticket-filters">
           <label>
             Status:
             <select id="status-filter">
               <option value="">All</option>
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
+              <option value="Open">Open</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </label>
+          <label>
+            Priority:
+            <select id="priority-filter">
+              <option value="">All</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </label>
           <!-- Additional filters for date, priority, and project -->
@@ -184,7 +193,7 @@
             </div>
 
             <div class="info-below">
-              <div class="ticket-info-a">
+              <div class="ticket-info-d">
                 <b>Department:</b> <span id="ticket-department"></span>
               </div>
               <div class="ticket-assigned">
@@ -220,6 +229,7 @@
 
       <!-- Create Ticket Form -->
       <section id="create-ticket-section" style="display: none">
+        <button class="back-btn" id="back-btn">&lt; Back</button>
         <form id="ticketForm">
           <div class="form-group">
             <label for="project">Project:</label>
@@ -367,11 +377,11 @@
               </div>
             </div>
           </div>
-          <div class="info-below">
-            <div class="ticket-info1">
+          <div class="customer-info-below">
+            <div class="customer-info1">
               <b>Country:</b> <span id="customer-country"></span>
             </div>
-            <div class="ticket-info1">
+            <div class="customer-info2">
               <b>City:</b> <span id="customer-city"></span>
             </div>
           </div>
@@ -444,6 +454,11 @@
               id="password"
               placeholder="Enter password"
             />
+          </div>
+
+          <div class="form-group">
+            <label for="image">Select image:</label>
+            <input type="file" id="image" name="image" accept="image/*" />
           </div>
 
           <button class="registerCustomer" type="submit" id="registerCustomer">

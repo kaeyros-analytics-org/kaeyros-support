@@ -42,24 +42,37 @@ router.post('/create', authenticate, (req, res) => {
 
 // Get all tickets (admin sees all, users see only their own)
 router.get('/all', authenticate, (req, res) => {
-  if (req.role === 'admin') {
-    db.query('SELECT * FROM tickets', (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Failed to retrieve tickets.' });
-      }
-      res.status(200).json(results);
-    });
-  } else {
-    db.query('SELECT * FROM tickets WHERE customer_id = ?', [req.customer_id], (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Failed to retrieve tickets.' });
-      }
-      res.status(200).json(results);
-    });
+    const { status, priority } = req.query;
+    let query = `SELECT * FROM tickets`;
+    const parameters = [];
+
+    const whereClauses = [];
+    if (status) {
+        whereClauses.push(`status = ?`);
+        parameters.push(status);
+    }
+    if (priority) {
+        whereClauses.push(`priority = ?`);
+        parameters.push(priority);
+    }
+
+    if (whereClauses.length > 0) {
+        query += ` WHERE ${whereClauses.join(' AND ')}`;
+    }
+  // Add user-specific filtering if not admin
+  if (req.role !== 'admin') {
+   query += (status ? ' AND ' : ' WHERE ') + 'customer_id = ?'; 
+   parameters.push(req.customer_id);
   }
-});
+ 
+  db.query(query, parameters, (err, results) => {
+   if (err) {
+    console.error("Error fetching tickets:", err);
+    return res.status(500).json({ error: 'Failed to fetch tickets' });
+   }
+   res.json(results);
+  });
+ });
 
 // Get ticket by ID (admin access to all, users only to their own)
 // router.get('/:id', authenticate, (req, res) => {
