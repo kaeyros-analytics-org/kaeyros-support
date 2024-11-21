@@ -334,7 +334,6 @@
               <option value="closed">Users</option>
             </select>
           </label>
-          <!-- Additional filters for date, priority, and project -->
         </div>
         <h3 id="customersListTitle" style="display: block">Customers List:</h3>
         <table class="customers-table" id="customersTable">
@@ -455,11 +454,11 @@
               placeholder="Enter password"
             />
           </div>
-
+          <!-- 
           <div class="form-group">
             <label for="image">Select image:</label>
             <input type="file" id="image" name="image" accept="image/*" />
-          </div>
+          </div> -->
 
           <button class="registerCustomer" type="submit" id="registerCustomer">
             Register Customer
@@ -469,7 +468,15 @@
 
       <section class="page" id="stats-section" style="display: none"></section>
     </main>
-
+    <script>
+      function preventBack() {
+        window.history.forward();
+      }
+      setTimeout("preventBack()", 0);
+      window.onunload = function () {
+        null;
+      };
+    </script>
     <script src="app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-labels@1.2.0/dist/chartjs-plugin-labels.min.js"></script>

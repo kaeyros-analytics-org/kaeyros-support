@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     
    
     document.getElementById("logout").addEventListener("click", () => {
+       localStorage.clear()
        window.location.href = '/index.html';
     });
     sidebarLinks.forEach(link => {
@@ -338,7 +339,7 @@ async function fetchTickets(filterStatus = "", filterPriority = "") {
     status: filterStatus,     
     priority:filterPriority 
    });
-   const url = `/api/tickets/all?${queryParams.toString()}`; //Construct the URL with query parameter
+   const url = `/api/tickets/all?${queryParams.toString()}`; 
  
    const response = await fetch(url, {
     headers: { 'auth-token': localStorage.getItem('authToken') },
@@ -385,7 +386,7 @@ function appendTicketRow(ticket) {
     <td>${ticket.subject}</td>
     <td>${ticket.priority}</td>
     <td>${ticket.type}</td>
-    <td>${new Date(ticket.created_at).toLocaleDateString()}</td>
+    <td>${formatDate1(ticket.created_at)}</td>
     <td style="color: ${setStatusColor(ticket.status)}">${ticket.status}</td> 
     <td class="notification-cell">
       <span class="notification-badge" id="notify-${ticket.ticket_id}" style="display: none;">0</span>
@@ -398,7 +399,14 @@ function appendTicketRow(ticket) {
 
   ticketsTableBody.appendChild(row);
 
+  function formatDate1(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()); 
 
+    return `${day}/${month}/${year}`;
+  }
 
 // OPEN TICKET MODAL
 function openTicketModal(ticket) {
@@ -583,32 +591,6 @@ document.getElementById('ticket-footer').innerHTML = `
   }
 
 
-
-  
-  // let lastResponseCounts = {}; // Keep track of last response counts per ticket
-
-  // async function checkForNewResponses() {          
-  //  const tickets = document.querySelectorAll('tr[data-ticket-id]');
-  //  tickets.forEach(row => {
-  //   const ticketId = row.dataset.ticketId;
-  //   const notificationBadge = document.getElementById(`notify-${ticketId}`);
-
-  //   fetch(`/api/responses/count/${ticketId}`) // New endpoint for counts
-  //    .then(response => response.json())
-  //    .then(data => {
-  //     const newCount = data.count;
-  //     if (newCount > (lastResponseCounts[ticketId] || 0)) {
-  //      notificationBadge.textContent = newCount;
-  //      notificationBadge.style.display = 'inline-block';
-  //      lastResponseCounts[ticketId] = newCount;
-  //     }
-  //    })
-  //    .catch(err => console.error('Error checking for new responses:', err));
-  //  });
-  // }
-
-  // setInterval(checkForNewResponses, 5000);
-
  
   modal.style.display = "flex";
 
@@ -697,24 +679,6 @@ fetch(`/api/responses/${ticketId}/responses`, {
 }
 
 
-// Format date helper function
-// function formatDate(dateString) {
-//   const date = new Date(dateString);
-//   return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-// }
-
-
-
-// Function to handle notifications for new responses
-// function updateNotification(ticketId, newResponses) {
-//   const notificationBadge = document.getElementById(`notify-${ticketId}`);
-//   if (newResponses > 0) {
-//     notificationBadge.textContent = newResponses;
-//     notificationBadge.style.display = "inline-block";
-//   } else {
-//     notificationBadge.style.display = "none";
-//   }
-// }
 fetchTickets();
 
 
@@ -736,7 +700,7 @@ customersForm.addEventListener('submit', async (event) => {
   const country = document.getElementById('country').value;
   const city = document.getElementById('city').value;
   const password = document.getElementById('password').value;
-  const image = document.getElementById('image').value;
+  // const image = document.getElementById('image').value;
 
 
   const token = localStorage.getItem('authToken');
@@ -758,7 +722,7 @@ customersForm.addEventListener('submit', async (event) => {
         'Content-Type': 'application/json',
         'auth-token': token
       },
-      body: JSON.stringify({ name, email, phone_number, project, country, city, image, password })
+      body: JSON.stringify({ name, email, phone_number, project, country, city, password })
     });
 
     if (response.ok) {
