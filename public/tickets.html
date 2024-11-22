@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tickets - Support Ticket System</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>...</header>
+    <aside>...</aside>
+
+    <main id="content">
+      <section id="tickets-section" style="display: none">
+        <!-- Button to create a new ticket -->
+        <button id="create-ticket-btn">Create a New Ticket</button>
+
+        <!-- Filter options -->
+        <div id="ticket-filters">
+          <label>
+            Status:
+            <select id="status-filter">
+              <option value="">All</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+          <!-- Additional filters for date, priority, and project -->
+        </div>
+
+        <!-- Tickets Table -->
+        <table id="tickets-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Project</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- Ticket Details Modal -->
+      <div id="ticket-modal" class="modal">
+        <div class="modal-content">
+          <!-- Ticket details and responses go here -->
+        </div>
+      </div>
+
+      <!-- Create Ticket Form -->
+      <section id="create-ticket-section" style="display: none">
+        <form id="create-ticket-form">
+          <!-- Form fields for ticket creation -->
+          <label
+            >Project:
+            <input type="text" name="project" placeholder="Enter project name"
+          /></label>
+          <label
+            >Subject:
+            <input type="text" name="subject" placeholder="Enter subject"
+          /></label>
+          <!-- Dropdowns for type and department, radio buttons for priority -->
+        </form>
+      </section>
+    </main>
+
+    <script src="tickets.js"></script>
+  </body>
+</html>

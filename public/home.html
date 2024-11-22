@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaeyros Support Ticket System</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo-area">
+        <img src="./images/ap-logo.png" alt="Logo" class="logo" />
+      </div>
+      <div
+        id="admin-header"
+        class="menu-section hidden"
+        style="color: black; padding-bottom: 10px"
+      >
+        Welcome Admin
+        <div id="admin-name"></div>
+      </div>
+      <div class="header-right">
+        <select id="language-select">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+        <a class="logout" id="logout" href="./index.html">Logout</a>
+      </div>
+    </header>
+
+    <aside id="sidebar">
+      <div id="admin-menu" class="menu-section hidden">
+        <button class="menu-btn active" data-target="dashboard">
+          Dashboard
+        </button>
+        <button class="menu-btn" data-target="tickets-section">Tickets</button>
+        <button class="menu-btn" data-target="customers-section">
+          Customers
+        </button>
+        <button class="menu-btn" data-target="Settings">Settings</button>
+      </div>
+
+      <div id="user-menu" class="menu-section hidden">
+        <div class="profile">
+          <img src="" alt="User Profile" id="profile-pic" />
+          <p id="user-name">User Name</p>
+          <p id="user-project">Project</p>
+        </div>
+        <button class="menu-btn active">Tickets</button>
+        <button class="menu-btn" data-target="Stats">Stats</button>
+      </div>
+    </aside>
+
+    <main id="content">
+      <div class="page active" id="dashboard" style="display: none">
+        <!-- Top Row: Ticket Stats -->
+        <div class="stat-box-row">
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Total Tickets</h3>
+              <p id="total-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="total-tickets-chart"></canvas>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Open Tickets</h3>
+              <p id="open-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="open-tickets-chart"></canvas>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-left">
+              <h3>Closed Tickets</h3>
+              <p id="closed-tickets">0</p>
+            </div>
+            <div class="stat-right">
+              <canvas id="closed-tickets-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="additional-stats">
+          <div class="additional-stat">
+            <h3>Tickets by Department</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="tickets-department-chart"></canvas>
+              </div>
+              <div class="stat-right" id="tickets-department-labels"></div>
+            </div>
+          </div>
+          <div class="additional-stat">
+            <h3>Tickets by Type</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="tickets-type-chart"></canvas>
+              </div>
+              <div class="stat-right" id="tickets-type-labels"></div>
+            </div>
+          </div>
+          <div class="additional-stat">
+            <h3>Top Ticket Creators</h3>
+            <div class="box-content">
+              <div class="stat-left1">
+                <canvas id="top-creators-chart"></canvas>
+              </div>
+              <div class="stat-right" id="top-creators-labels"></div>
+            </div>
+          </div>
+          <div class="additional-stat">
+            <div>
+              <h4>Number of Customers</h4>
+              <p id="num-customers">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="page" id="tickets-section" style="display: none">
+        <!-- Button to create a new ticket -->
+        <button class="create-btn" id="create-ticket-btn">
+          Create a New Ticket
+        </button>
+
+        <!-- Filter options -->
+        <div class="ticket-filters">
+          <label>
+            Status:
+            <select id="status-filter">
+              <option value="">All</option>
+              <option value="Open">Open</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </label>
+          <label>
+            Priority:
+            <select id="priority-filter">
+              <option value="">All</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </label>
+          <!-- Additional filters for date, priority, and project -->
+        </div>
+
+        <!-- Tickets Table -->
+        <h3 id="ticketsListTitle" style="display: none">Tickets List:</h3>
+        <table class="tickets-table" id="ticketsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Project</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- Ticket Details Modal -->
+      <!-- Ticket Details Modal -->
+      <div id="ticket-modal" class="modal">
+        <div class="modal-content">
+          <button id="close-modal">X</button>
+          <!-- Ticket Details Box -->
+          <h2 class="preview">Ticket Preview</h2>
+          <div id="ticket-details-box">
+            <div id="ticket-top">
+              <span id="ticket-id-subject"></span>
+            </div>
+            <div id="ticket-bottom">
+              <div class="ticket-info-a">
+                <strong>Type:</strong> <span id="ticket-type"></span>
+              </div>
+              <div class="ticket-info-b">
+                <b>Priority:</b> <span id="ticket-priority"></span>
+              </div>
+              <div class="ticket-info-c">
+                <b>Status:</b>
+                <div class="ticket-status"></div>
+              </div>
+            </div>
+
+            <div class="info-below">
+              <div class="ticket-info-d">
+                <b>Department:</b> <span id="ticket-department"></span>
+              </div>
+              <div class="ticket-assigned">
+                <label><b>Assigned To:</b></label>
+                <span id="ticket-assigned-display"></span>
+                <select id="ticket-assigned-select" style="display: none">
+                  <option value="Unassigned">Unassigned</option>
+                  <option value="Engineer 1">Engineer 1</option>
+                  <option value="Engineer 2">Engineer 2</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ticket Activity Section -->
+          <h2 class="activity">Ticket Activity</h2>
+          <div class="ticket-activity"></div>
+
+          <!-- Responses Section -->
+          <label for="response-input">Message</label>
+          <textarea
+            name="response"
+            id="response"
+            placeholder="Send a message"
+            rows="3"
+          ></textarea>
+          <button class="responseBtn" id="send-response" type="submit">
+            <b>Send Response</b>
+          </button>
+          <div class="ticket-footer" id="ticket-footer"></div>
+        </div>
+      </div>
+
+      <!-- Create Ticket Form -->
+      <section id="create-ticket-section" style="display: none">
+        <button class="back-btn" id="back-btn">&lt; Back</button>
+        <form id="ticketForm">
+          <div class="form-group">
+            <label for="project">Project:</label>
+            <input
+              type="text"
+              name="project"
+              id="project"
+              placeholder="Enter Project Name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input
+              type="text"
+              name="subject"
+              id="subject"
+              placeholder="Enter Subject"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="type">Ticket Type:</label>
+            <select name="type" id="type" required>
+              <option value="">Select Type</option>
+              <option value="Bug">Bug</option>
+              <option value="Feature Request">Feature Request</option>
+              <option value="Support Request">Support Request</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea
+              name="description"
+              id="description"
+              placeholder="Describe the issue"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">Priority:</label>
+            <div class="priority-options">
+              <div class="option">
+                <input type="radio" name="priority" id="priority" value="Low" />
+                <label>Low</label>
+              </div>
+              <div class="option">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="priority"
+                  value="Medium"
+                />
+                <label>Medium</label>
+              </div>
+              <div class="option">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="priority"
+                  value="High"
+                />
+                <label>High</label>
+              </div>
+            </div>
+            <input type="hidden" name="priority" id="priority" value="" />
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department:</label>
+            <select name="department" id="department" required>
+              <option value="">Select Department</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Sales">Sales</option>
+              <option value="Support">Support</option>
+            </select>
+          </div>
+
+          <button class="createTicket" type="submit" id="submitTicket">
+            Create Ticket
+          </button>
+        </form>
+      </section>
+
+      <section class="page" id="customers-section" style="display: none">
+        <button class="create-btn" id="create-customer-btn">
+          Register a New Customer
+        </button>
+
+        <!-- Filter options -->
+        <div id="customer-filters">
+          <label>
+            Role:
+            <select id="role-filter">
+              <option value="">All</option>
+              <option value="open">Admin</option>
+              <option value="closed">Users</option>
+            </select>
+          </label>
+        </div>
+        <h3 id="customersListTitle" style="display: block">Customers List:</h3>
+        <table class="customers-table" id="customersTable">
+          <thead>
+            <tr id=".tr1">
+              <!-- <th>Id</th> -->
+              <th>Project</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>City</th>
+              <th>Number of Tickets</th>
+              <!-- <th>Creation date</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <!-- customers data will be appended here -->
+          </tbody>
+        </table>
+      </section>
+
+      <div id="customer-modal" class="modal">
+        <div class="modal-content">
+          <button id="close-modal1">X</button>
+          <!-- Ticket Details Box -->
+          <h2 class="details">Customer Details</h2>
+          <div id="ticket-details-box">
+            <div id="ticket-top">
+              <span id="customer-id-name"></span>
+            </div>
+            <div id="customer-bottom">
+              <div class="customer-info-a">
+                <b>Email:</b> <span id="customer-email"></span>
+              </div>
+              <div class="customer-info-b">
+                <b>Project:</b> <span id="customer-project"></span>
+              </div>
+              <div class="customer-info-c">
+                <b>Phone Number:</b>
+                <div id="customer-phone"></div>
+              </div>
+            </div>
+          </div>
+          <div class="customer-info-below">
+            <div class="customer-info1">
+              <b>Country:</b> <span id="customer-country"></span>
+            </div>
+            <div class="customer-info2">
+              <b>City:</b> <span id="customer-city"></span>
+            </div>
+          </div>
+          <button class="deleteBtn" id="deleteCustomersBtn" type="submit">
+            Delete customer
+          </button>
+
+          <div class="ticket-footer" id="customer-footer">
+            CUSTOMER .. HAS BEEN UPDATED
+          </div>
+        </div>
+      </div>
+
+      <!-- Register customer Form -->
+      <section id="create-customer-section" style="display: none">
+        <form id="customerForm">
+          <div class="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              name="project"
+              id="name"
+              placeholder="Enter username"
+            />
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter email"
+            />
+          </div>
+          <div class="form-group">
+            <label>Phone Number:</label>
+            <input
+              type="number"
+              name="phone_number"
+              id="phone_number"
+              placeholder="Enter phone_number"
+            />
+          </div>
+          <div class="form-group">
+            <label>Project:</label>
+            <input
+              type="text"
+              name="project"
+              id="project1"
+              placeholder="Enter project"
+            />
+          </div>
+          <div class="form-group">
+            <label for="type">Country:</label>
+            <select name="country" id="country" required>
+              <option value="Cameroon">Cameroon</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>City:</label>
+
+            <input type="text" name="city" id="city" placeholder="Enter city" />
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter password"
+            />
+          </div>
+          <!-- 
+          <div class="form-group">
+            <label for="image">Select image:</label>
+            <input type="file" id="image" name="image" accept="image/*" />
+          </div> -->
+
+          <button class="registerCustomer" type="submit" id="registerCustomer">
+            Register Customer
+          </button>
+        </form>
+      </section>
+
+      <section class="page" id="stats-section" style="display: none"></section>
+    </main>
+    <script>
+      function preventBack() {
+        window.history.forward();
+      }
+      setTimeout("preventBack()", 0);
+      window.onunload = function () {
+        null;
+      };
+    </script>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-labels@1.2.0/dist/chartjs-plugin-labels.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Kaeyros S.T.S</title>
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left Side -->
+      <div class="left">
+        <h1>Log in Kaeyros S.T.S</h1>
+        <form id="loginForm" action="/login" method="POST">
+          <div class="input-container">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="input-container">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <p class="forgot-password">Have you forgotten your password?</p>
+          <button type="submit" class="login-button" id="loginBtn">
+            Log in
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <div class="right-inner-container">
+          <h2>
+            Here on this digital platform all the problems of our partners will
+            be solved
+          </h2>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="login.js"></script>
