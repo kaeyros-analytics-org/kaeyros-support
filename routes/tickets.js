@@ -7,21 +7,21 @@ const authenticate = require('../middleware/auth');
 router.post('/create', authenticate, (req, res) => {
   const { project, subject, type, description, priority, department, assigned_to } = req.body;
   const customer_id = req.customer_id;
- 
+
   if (!project || !subject || !type || !description || !priority || !department) {
-   return res.status(400).json({ msg: 'Please fill all required fields.' });
+    return res.status(400).json({ msg: 'Please fill all required fields.' });
   }
- 
+
   // Query to count tickets in the project
   db.query(`SELECT COUNT(*) as count FROM tickets WHERE project = ?`, [project], (err, result) => {
     if (err) {
       console.error('Error counting tickets:', err);
       return res.status(500).json({ error: 'Failed to create ticket.' });
     }
- 
+
     const ticketCount = result[0].count + 1;
     const formattedTicketId = `${project}#${String(ticketCount).padStart(4, '0')}`;
- 
+
     // Insert the ticket
     const insertQuery = `
       INSERT INTO tickets 
@@ -36,43 +36,43 @@ router.post('/create', authenticate, (req, res) => {
       res.status(201).json({ msg: 'Ticket created successfully.', ticketId: formattedTicketId });
     });
   });
- });
+});
 
 
 
 // Get all tickets (admin sees all, users see only their own)
 router.get('/all', authenticate, (req, res) => {
-    const { status, priority } = req.query;
-    let query = `SELECT * FROM tickets`;
-    const parameters = [];
+  const { status, priority } = req.query;
+  let query = `SELECT * FROM tickets`;
+  const parameters = [];
 
-    const whereClauses = [];
-    if (status) {
-        whereClauses.push(`status = ?`);
-        parameters.push(status);
-    }
-    if (priority) {
-        whereClauses.push(`priority = ?`);
-        parameters.push(priority);
-    }
+  const whereClauses = [];
+  if (status) {
+    whereClauses.push(`status = ?`);
+    parameters.push(status);
+  }
+  if (priority) {
+    whereClauses.push(`priority = ?`);
+    parameters.push(priority);
+  }
 
-    if (whereClauses.length > 0) {
-        query += ` WHERE ${whereClauses.join(' AND ')}`;
-    }
+  if (whereClauses.length > 0) {
+    query += ` WHERE ${whereClauses.join(' AND ')}`;
+  }
   // Add user-specific filtering if not admin
   if (req.role !== 'admin') {
-   query += (status ? ' AND ' : ' WHERE ') + 'customer_id = ?'; 
-   parameters.push(req.customer_id);
+    query += (status ? ' AND ' : ' WHERE ') + 'customer_id = ?';
+    parameters.push(req.customer_id);
   }
- 
+
   db.query(query, parameters, (err, results) => {
-   if (err) {
-    console.error("Error fetching tickets:", err);
-    return res.status(500).json({ error: 'Failed to fetch tickets' });
-   }
-   res.json(results);
+    if (err) {
+      console.error("Error fetching tickets:", err);
+      return res.status(500).json({ error: 'Failed to fetch tickets' });
+    }
+    res.json(results);
   });
- });
+});
 
 // Get ticket by ID (admin access to all, users only to their own)
 // router.get('/:id', authenticate, (req, res) => {
@@ -226,7 +226,7 @@ router.get('/stats', authenticate, (req, res) => {
               }));
 
               // Get top ticket creators
-                db.query(`
+              db.query(`
                 SELECT customers.name, COUNT(tickets.id) AS ticketCount 
                 FROM tickets 
                 JOIN customers ON tickets.customer_id = customers.id 

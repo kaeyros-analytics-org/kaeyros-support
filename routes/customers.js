@@ -137,15 +137,15 @@ router.delete('/:id', authenticate, (req, res) => {
 router.get('/profile', authenticate, (req, res) => {
   const query = 'SELECT id, image, name, email, phone_number, role, project, created_at FROM customers WHERE id = ?';
   db.query(query, [req.customer_id], (err, results) => {
-   if (err) {
-    console.error('Error querying database:', err);
-    return res.status(500).json({ error: 'Failed to fetch user data' });
-   }
-   if (results.length === 0) {
-    return res.status(404).json({ msg: 'User not found' });
-   }
-   res.status(200).json(results[0]);
+    if (err) {
+      console.error('Error querying database:', err);
+      return res.status(500).json({ error: 'Failed to fetch user data' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    res.status(200).json(results[0]);
   });
- });
+});
 
 module.exports = router;

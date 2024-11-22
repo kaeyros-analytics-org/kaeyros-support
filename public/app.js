@@ -1,130 +1,130 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
-  
-    const sidebarLinks = document.querySelectorAll(".menu-btn");
-    const role = await getUserRole();
-    displayMenuBasedOnRole(role);
-    const pages = document.querySelectorAll('.page');
-    
-   
-    document.getElementById("logout").addEventListener("click", () => {
-       localStorage.clear()
-       window.location.href = '/index.html';
-    });
-    sidebarLinks.forEach(link => {
-      link.addEventListener("click", (e) => {
-        sidebarLinks.forEach(link => link.classList.remove("active"));
-        e.currentTarget.classList.add("active");
-        loadDashboardStats();
 
-   
-        // Get target ID from the data-target attribute
-        const target = e.currentTarget.getAttribute('data-target');
-        // const newUrl = `/home.html/${target}`; //new URL
-        // window.history.pushState({}, '', newUrl);
+  const sidebarLinks = document.querySelectorAll(".menu-btn");
+  const role = await getUserRole();
+  displayMenuBasedOnRole(role);
+  const pages = document.querySelectorAll('.page');
 
-        //   // Handle URL changes
-        // window.addEventListener('popstate', (event) => {
-        //   const path = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
-        //   displaySection(path); 
-        // });
-   
-        // Find the active page and remove the 'active' class
-        const activePage = document.querySelector('.page.active');
-        if (activePage) {
-          activePage.classList.remove('active');
-        }
-   
-        // Add active class to the target page
-        const targetPage = document.getElementById(target);
-        targetPage.classList.add('active');
-   
-        // Set the display of pages
-        pages.forEach(page => {
-         if (page.id === target) {
+
+  document.getElementById("logout").addEventListener("click", () => {
+    localStorage.clear()
+    window.location.href = '/index.html';
+  });
+  sidebarLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      sidebarLinks.forEach(link => link.classList.remove("active"));
+      e.currentTarget.classList.add("active");
+      loadDashboardStats();
+
+
+      // Get target ID from the data-target attribute
+      const target = e.currentTarget.getAttribute('data-target');
+      // const newUrl = `/home.html/${target}`; //new URL
+      // window.history.pushState({}, '', newUrl);
+
+      //   // Handle URL changes
+      // window.addEventListener('popstate', (event) => {
+      //   const path = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+      //   displaySection(path); 
+      // });
+
+      // Find the active page and remove the 'active' class
+      const activePage = document.querySelector('.page.active');
+      if (activePage) {
+        activePage.classList.remove('active');
+      }
+
+      // Add active class to the target page
+      const targetPage = document.getElementById(target);
+      targetPage.classList.add('active');
+
+      // Set the display of pages
+      pages.forEach(page => {
+        if (page.id === target) {
           page.style.display = 'block';
           document.getElementById("create-ticket-section").style.display = "none";
           document.getElementById("create-customer-section").style.display = "none";
-         } else {
+        } else {
           page.style.display = 'none';
-          
-         }
-        });
-   
+
+        }
       });
+
     });
-   
-    // Initially display the dashboard for admin, and tickets for other users
-    if (role === 'admin') {
-      document.getElementById('dashboard').style.display = 'block';
-      document.querySelector('.menu-btn[data-target="dashboard"]').classList.add('active'); 
-    } else {
-      document.getElementById('tickets-section').style.display = 'block';
-      document.querySelector('.menu-btn[data-target="tickets-section"]').classList.add('active');
-    }
-   
-    loadDashboardStats();
-});  
+  });
+
+  // Initially display the dashboard for admin, and tickets for other users
+  if (role === 'admin') {
+    document.getElementById('dashboard').style.display = 'block';
+    document.querySelector('.menu-btn[data-target="dashboard"]').classList.add('active');
+  } else {
+    document.getElementById('tickets-section').style.display = 'block';
+    document.querySelector('.menu-btn[data-target="tickets-section"]').classList.add('active');
+  }
+
+  loadDashboardStats();
+});
 
 let currentRole = null;
 
-   
+
 ///GET USER ROLE
 async function getUserRole() {
   try {
-   const response = await fetch('/api/customers/get-role', {
-    headers: { 'auth-token': localStorage.getItem('authToken') },
-   });
-   if (!response.ok) throw new Error("Failed to fetch user role");
-   const data = await response.json();
-   currentRole = data.role; // Assign the role to the global variable
-   return data.role;
+    const response = await fetch('/api/customers/get-role', {
+      headers: { 'auth-token': localStorage.getItem('authToken') },
+    });
+    if (!response.ok) throw new Error("Failed to fetch user role");
+    const data = await response.json();
+    currentRole = data.role; // Assign the role to the global variable
+    return data.role;
   } catch (error) {
-   console.error('Error fetching user role:', error);
+    console.error('Error fetching user role:', error);
   }
- }
-   
-   function displayMenuBasedOnRole(role) {
-     if (role === 'admin') {
-       document.getElementById("admin-menu").classList.remove("hidden");
-       document.getElementById("admin-header").classList.remove("hidden");
-     } else {
-       document.getElementById("user-menu").classList.remove("hidden");
-     }
-   }
- 
-   
+}
+
+function displayMenuBasedOnRole(role) {
+  if (role === 'admin') {
+    document.getElementById("admin-menu").classList.remove("hidden");
+    document.getElementById("admin-header").classList.remove("hidden");
+  } else {
+    document.getElementById("user-menu").classList.remove("hidden");
+  }
+}
+
+
 /////GET USER INFORMATION
-   async function getUserProfile() {
-    const token = localStorage.getItem('authToken');
-    
-    if (!token) {
-        console.error("No auth token found, redirecting to login.");
-        window.location.href = '/index.html';
-        return;
+async function getUserProfile() {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    console.error("No auth token found, redirecting to login.");
+    window.location.href = '/index.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/customers/profile', {
+      headers: { 'auth-token': localStorage.getItem('authToken') },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch user profile");
+
+    const userData = await response.json();
+
+    if (userData) {
+      // Display user information in the sidebar
+      console.log("User data fetched:", userData); // Debug log
+      document.getElementById('profile-pic').src = userData.image || './images/default-profile.jpg';
+      document.getElementById('user-name').innerText = userData.name;
+      document.getElementById('user-project').innerText = userData.project;
+      document.getElementById("admin-name").innerText = userData.name;
+
     }
-
-    try {
-        const response = await fetch('/api/customers/profile', {
-          headers: { 'auth-token': localStorage.getItem('authToken') },
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch user profile");
-
-        const userData = await response.json();
-        
-        if (userData) {
-            // Display user information in the sidebar
-            console.log("User data fetched:", userData); // Debug log
-            document.getElementById('profile-pic').src = userData.image || './images/default-profile.jpg';
-            document.getElementById('user-name').innerText = userData.name;
-            document.getElementById('user-project').innerText = userData.project;
-            document.getElementById("admin-name").innerText = userData.name;
-
-        }
-    } catch (err) {
-        console.error('Error fetching profile:', err);
-    }
+  } catch (err) {
+    console.error('Error fetching profile:', err);
+  }
 }
 window.onload = getUserProfile;
 
@@ -132,40 +132,40 @@ window.onload = getUserProfile;
 ///LOAD DASHBOARD STATS
 async function loadDashboardStats() {
   try {
-      const stats = await fetchStats();
+    const stats = await fetchStats();
 
-      // Set top-level statistics
-      document.getElementById("total-tickets").innerText = stats.totalTickets;
-      document.getElementById("open-tickets").innerText = stats.openTickets;
-      document.getElementById("closed-tickets").innerText = stats.closedTickets;
-      document.getElementById("num-customers").innerText = stats.numCustomers;
+    // Set top-level statistics
+    document.getElementById("total-tickets").innerText = stats.totalTickets;
+    document.getElementById("open-tickets").innerText = stats.openTickets;
+    document.getElementById("closed-tickets").innerText = stats.closedTickets;
+    document.getElementById("num-customers").innerText = stats.numCustomers;
 
-      // Render top donut charts
-      renderPercentageDonutChart("total-tickets-chart", stats.totalTickets, 100, ['#0f2a97']);
-      renderPercentageDonutChart("open-tickets-chart", stats.openTickets, (stats.openTickets / stats.totalTickets) * 100, ['#0f2a97', '#ddd']);
-      renderPercentageDonutChart("closed-tickets-chart", stats.closedTickets, (stats.closedTickets / stats.totalTickets) * 100, ['#f80e06', '#ddd']);
+    // Render top donut charts
+    renderPercentageDonutChart("total-tickets-chart", stats.totalTickets, 100, ['#0f2a97']);
+    renderPercentageDonutChart("open-tickets-chart", stats.openTickets, (stats.openTickets / stats.totalTickets) * 100, ['#0f2a97', '#ddd']);
+    renderPercentageDonutChart("closed-tickets-chart", stats.closedTickets, (stats.closedTickets / stats.totalTickets) * 100, ['#f80e06', '#ddd']);
 
-      // Render additional stats donut charts
-      renderDonutChartWithLabels("tickets-department-chart", stats.ticketsByDepartment, "tickets-department-labels");
-      renderDonutChartWithLabels("tickets-type-chart", stats.ticketsByType, "tickets-type-labels");
-      renderDonutChartWithLabels("top-creators-chart", stats.topCreators, "top-creators-labels");
+    // Render additional stats donut charts
+    renderDonutChartWithLabels("tickets-department-chart", stats.ticketsByDepartment, "tickets-department-labels");
+    renderDonutChartWithLabels("tickets-type-chart", stats.ticketsByType, "tickets-type-labels");
+    renderDonutChartWithLabels("top-creators-chart", stats.topCreators, "top-creators-labels");
 
   } catch (error) {
-      console.error("Error loading dashboard stats:", error);
+    console.error("Error loading dashboard stats:", error);
   }
 }
 
 async function fetchStats() {
   const token = localStorage.getItem('authToken');
   try {
-      const response = await fetch('/api/tickets/stats', {
-          headers: { 'auth-token': token }
-      });
-      if (!response.ok) throw new Error("Failed to fetch stats");
+    const response = await fetch('/api/tickets/stats', {
+      headers: { 'auth-token': token }
+    });
+    if (!response.ok) throw new Error("Failed to fetch stats");
 
-      return await response.json();
+    return await response.json();
   } catch (error) {
-      console.error("Error fetching stats:", error);
+    console.error("Error fetching stats:", error);
   }
 }
 
@@ -173,30 +173,30 @@ function renderPercentageDonutChart(canvasId, value, percentage, colors) {
   const ctx = document.getElementById(canvasId).getContext("2d");
 
   new Chart(ctx, {
-     type: 'doughnut',
-     data: {
-        datasets: [{
-           data: [percentage, 100 - percentage],
-           backgroundColor: colors,
-        }],
-     },
-     options: {
-        responsive: true,
-        cutoutPercentage: 70, // For Chart.js 3.x, else use cutout
-        plugins: {
-           legend: { display: false },
-           tooltip: { enabled: false },
-           doughnutlabel: {
-              labels: [
-                 {
-                    text: `${percentage.toFixed(1)}%`,
-                    font: { size: 20, weight: 'bold' },
-                    color: '#333',
-                 },
-              ],
-           },
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [percentage, 100 - percentage],
+        backgroundColor: colors,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutoutPercentage: 70, // For Chart.js 3.x, else use cutout
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+        doughnutlabel: {
+          labels: [
+            {
+              text: `${percentage.toFixed(1)}%`,
+              font: { size: 20, weight: 'bold' },
+              color: '#333',
+            },
+          ],
         },
-     },
+      },
+    },
   });
 }
 
@@ -215,45 +215,45 @@ function renderDonutChartWithLabels(canvasId, data, labelContainerId) {
   });
 
   new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-          labels: data.map(item => item.name),
-          datasets: [{
-              data: data.map(item => item.count),
-              backgroundColor: colors,
-          }],
+    type: 'doughnut',
+    data: {
+      labels: data.map(item => item.name),
+      datasets: [{
+        data: data.map(item => item.count),
+        backgroundColor: colors,
+      }],
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(tooltipItem) {
+              const item = data[tooltipItem.dataIndex];
+              const percentage = ((item.count / totalValue) * 100).toFixed(1);
+              return `${item.name}: ${percentage}% (${item.count})`;
+            }
+          }
+        }
       },
-      options: {
-          responsive: true,
-          cutout: '60%',
-          plugins: {
-              legend: { display: false },
-              tooltip: {
-                  callbacks: {
-                      label: function (tooltipItem) {
-                          const item = data[tooltipItem.dataIndex];
-                          const percentage = ((item.count / totalValue) * 100).toFixed(1);
-                          return `${item.name}: ${percentage}% (${item.count})`;
-                      }
-                  }
-              }
-          },
-      },
+    },
   });
 
   const labelContainer = document.getElementById(labelContainerId);
   labelContainer.innerHTML = ''; // Clear previous labels
 
   data.forEach((item, index) => {
-      const percentage = ((item.count / totalValue) * 100).toFixed(1);
+    const percentage = ((item.count / totalValue) * 100).toFixed(1);
 
-      const labelItem = document.createElement('div');
-      labelItem.classList.add('label-item');
-      labelItem.innerHTML = `
+    const labelItem = document.createElement('div');
+    labelItem.classList.add('label-item');
+    labelItem.innerHTML = `
           <span class="color-box" style="background-color: ${colors[index]};"></span>
           <span>${item.name}: ${percentage}% (${item.count})</span>
       `;
-      labelContainer.appendChild(labelItem);
+    labelContainer.appendChild(labelItem);
   });
 }
 
@@ -266,9 +266,9 @@ document.getElementById("create-ticket-btn").addEventListener("click", () => {
 
 
 document.getElementById("create-customer-btn").addEventListener("click", () => {
-    // Show customer creation form and hide customers table
-    document.getElementById("customers-section").style.display = "none";
-    document.getElementById("create-customer-section").style.display = "block";
+  // Show customer creation form and hide customers table
+  document.getElementById("customers-section").style.display = "none";
+  document.getElementById("create-customer-section").style.display = "block";
 });
 
 
@@ -321,7 +321,7 @@ ticketForm.addEventListener('submit', async (event) => {
       document.getElementById("tickets-section").style.display = "block";
       document.getElementById("create-ticket-section").style.display = "none";
 
-      fetchTickets(); 
+      fetchTickets();
     } else {
       const result = await response.json();
       alert('Ticket creation failed: ' + result.msg);
@@ -333,43 +333,43 @@ ticketForm.addEventListener('submit', async (event) => {
 
 
 // FETCH AND DISPLAY TICKETS  AND FILTER OPTIONS
-async function fetchTickets(filterStatus = "", filterPriority = "") { 
+async function fetchTickets(filterStatus = "", filterPriority = "") {
   try {
-   const queryParams = new URLSearchParams({
-    status: filterStatus,     
-    priority:filterPriority 
-   });
-   const url = `/api/tickets/all?${queryParams.toString()}`; 
- 
-   const response = await fetch(url, {
-    headers: { 'auth-token': localStorage.getItem('authToken') },
-   });
-   if (!response.ok) throw new Error("Failed to fetch tickets");
-   const tickets = await response.json();
-   ticketsTableBody.innerHTML = ''; 
-   tickets.forEach(ticket => {
-    appendTicketRow(ticket);
-   });
+    const queryParams = new URLSearchParams({
+      status: filterStatus,
+      priority: filterPriority
+    });
+    const url = `/api/tickets/all?${queryParams.toString()}`;
+
+    const response = await fetch(url, {
+      headers: { 'auth-token': localStorage.getItem('authToken') },
+    });
+    if (!response.ok) throw new Error("Failed to fetch tickets");
+    const tickets = await response.json();
+    ticketsTableBody.innerHTML = '';
+    tickets.forEach(ticket => {
+      appendTicketRow(ticket);
+    });
   } catch (error) {
-   console.error("Error fetching tickets:", error);
+    console.error("Error fetching tickets:", error);
   }
- }
- 
- //  status filter
- const statusFilterSelect = document.getElementById("status-filter");
- statusFilterSelect.addEventListener("change", () => {
+}
+
+//  status filter
+const statusFilterSelect = document.getElementById("status-filter");
+statusFilterSelect.addEventListener("change", () => {
   const selectedStatus = statusFilterSelect.value;
   const selectedPriority = priorityFilterSelect.value;
-  fetchTickets(selectedStatus, selectedPriority); 
- });
+  fetchTickets(selectedStatus, selectedPriority);
+});
 
 //  priority filter
- const priorityFilterSelect = document.getElementById("priority-filter");
- priorityFilterSelect.addEventListener("change", () => {
-     const selectedStatus = statusFilterSelect.value;
-     const selectedPriority = priorityFilterSelect.value;
-     fetchTickets(selectedStatus, selectedPriority);
- });
+const priorityFilterSelect = document.getElementById("priority-filter");
+priorityFilterSelect.addEventListener("change", () => {
+  const selectedStatus = statusFilterSelect.value;
+  const selectedPriority = priorityFilterSelect.value;
+  fetchTickets(selectedStatus, selectedPriority);
+});
 
 // Function to append a single ticket row to the table
 function setStatusColor(status) {
@@ -393,7 +393,7 @@ function appendTicketRow(ticket) {
     </td>
   `;
 
-  row.addEventListener('click', function () {
+  row.addEventListener('click', function() {
     openTicketModal(ticket);
   });
 
@@ -403,247 +403,247 @@ function appendTicketRow(ticket) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear()); 
+    const year = String(date.getFullYear());
 
     return `${day}/${month}/${year}`;
   }
 
-// OPEN TICKET MODAL
-function openTicketModal(ticket) {
-  
-  const closeButton = document.getElementById('close-modal');
-  const modal = document.getElementById("ticket-modal");
-  const status1 = document.querySelector('.ticket-status');
-  const responseTextArea = document.getElementById('response');
-  const sendMessageButton = document.getElementById('send-response');
- 
-  // Set ticket information
-  document.getElementById("ticket-id-subject").textContent = `${ticket.ticket_id} - ${ticket.subject}`;
-  document.getElementById("ticket-type").textContent = ticket.type;
-  document.getElementById("ticket-priority").textContent = ticket.priority;
-  document.getElementById("ticket-department").textContent = ticket.department;
+  // OPEN TICKET MODAL
+  function openTicketModal(ticket) {
+
+    const closeButton = document.getElementById('close-modal');
+    const modal = document.getElementById("ticket-modal");
+    const status1 = document.querySelector('.ticket-status');
+    const responseTextArea = document.getElementById('response');
+    const sendMessageButton = document.getElementById('send-response');
+
+    // Set ticket information
+    document.getElementById("ticket-id-subject").textContent = `${ticket.ticket_id} - ${ticket.subject}`;
+    document.getElementById("ticket-type").textContent = ticket.type;
+    document.getElementById("ticket-priority").textContent = ticket.priority;
+    document.getElementById("ticket-department").textContent = ticket.department;
 
 
-// Remove previous event listener to avoid duplicate calls
-const newSendMessageHandler = async function () {
-  const responseContent = responseTextArea.value;
+    // Remove previous event listener to avoid duplicate calls
+    const newSendMessageHandler = async function() {
+      const responseContent = responseTextArea.value;
 
-  if (!responseContent.trim()) {
-    alert('Response cannot be empty.');
-    return;
-  }
+      if (!responseContent.trim()) {
+        alert('Response cannot be empty.');
+        return;
+      }
 
-  const payload = {
-    response: responseContent,
-    images: null 
-  };
+      const payload = {
+        response: responseContent,
+        images: null
+      };
 
-  const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('authToken');
 
-  try {
-    // Send the response to the backend
-    const response = await fetch(`/api/responses/${ticketId}/responses`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'auth-token': token 
-      },
-      body: JSON.stringify(payload)
+      try {
+        // Send the response to the backend
+        const response = await fetch(`/api/responses/${ticketId}/responses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'auth-token': token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (data.msg === 'Response sent successfully.') {
+          responseTextArea.value = '';
+          openTicketModal(ticket);
+        }
+      } catch (err) {
+        console.error('Failed to send response:', err);
+      }
+    };
+
+    // Clear any previous event listener and add the new one
+    sendMessageButton.removeEventListener('click', newSendMessageHandler);
+    sendMessageButton.addEventListener('click', newSendMessageHandler, { once: true });
+
+    // Update status dropdown and color
+    const statusDropdown = document.createElement("select");
+    statusDropdown.name = "status";
+    statusDropdown.classList.add("status-dropdown");
+
+    // 'open' option
+    const openOption = document.createElement("option");
+    openOption.value = "open";
+    openOption.textContent = "Open";
+    openOption.style.color = "green";
+    openOption.classList.add("status-option")
+
+    // 'closed' option
+    const closedOption = document.createElement("option");
+    closedOption.value = "closed";
+    closedOption.textContent = "Closed";
+    closedOption.style.color = "red";
+    closedOption.classList.add("status-option")
+
+
+    // Append the options to the dropdown
+    statusDropdown.appendChild(openOption);
+    statusDropdown.appendChild(closedOption);
+
+    statusDropdown.value = ticket.status;
+
+    updateDropdownColor(statusDropdown);
+
+    // Event Listener for Status Change
+    statusDropdown.addEventListener('change', async function() {
+      const newStatus = statusDropdown.value;
+
+      try {
+        await updateTicketStatus(ticket.id, newStatus);
+        ticket.status = newStatus;
+        updateDropdownColor(statusDropdown); // Update dropdown color
+
+        // Update the status in the table without reloading the page
+        const tableRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
+        if (tableRow) {
+          const statusCell = tableRow.querySelector('td:nth-child(7)');
+          statusCell.textContent = newStatus;
+          statusCell.style.color = newStatus === 'open' ? 'green' : 'red';
+        }
+
+        console.log("Ticket status updated to:", newStatus);
+      } catch (error) {
+        console.error('Error updating ticket status:', error);
+        alert('Failed to update ticket status');
+      }
     });
 
-    const data = await response.json();
+    status1.innerHTML = '';
+    status1.appendChild(statusDropdown);
 
-    if (data.msg === 'Response sent successfully.') {
-      responseTextArea.value = '';
-      openTicketModal(ticket); 
-    }
-  } catch (err) {
-    console.error('Failed to send response:', err);
-  }
-};
-
-// Clear any previous event listener and add the new one
-sendMessageButton.removeEventListener('click', newSendMessageHandler);
-  sendMessageButton.addEventListener('click', newSendMessageHandler, { once: true });
-
- // Update status dropdown and color
- const statusDropdown = document.createElement("select");
- statusDropdown.name = "status";
- statusDropdown.classList.add("status-dropdown");
-
- // 'open' option
- const openOption = document.createElement("option");
- openOption.value = "open";
- openOption.textContent = "Open";
- openOption.style.color = "green";
- openOption.classList.add("status-option")
-
- // 'closed' option
- const closedOption = document.createElement("option");
- closedOption.value = "closed";
- closedOption.textContent = "Closed";
- closedOption.style.color = "red";
-closedOption.classList.add("status-option")
-
-
- // Append the options to the dropdown
- statusDropdown.appendChild(openOption);
- statusDropdown.appendChild(closedOption);
-
- statusDropdown.value = ticket.status;
-
- updateDropdownColor(statusDropdown);
-
- // Event Listener for Status Change
- statusDropdown.addEventListener('change', async function () {
-  const newStatus = statusDropdown.value;
-
-  try {
-   await updateTicketStatus(ticket.id, newStatus); 
-   ticket.status = newStatus; 
-   updateDropdownColor(statusDropdown); // Update dropdown color
-
-   // Update the status in the table without reloading the page
-   const tableRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
-   if (tableRow) {
-    const statusCell = tableRow.querySelector('td:nth-child(7)');
-    statusCell.textContent = newStatus;
-    statusCell.style.color = newStatus === 'open' ? 'green' : 'red';
-   }
-
-   console.log("Ticket status updated to:", newStatus);
-  } catch (error) {
-   console.error('Error updating ticket status:', error);
-   alert('Failed to update ticket status');
-  }
- });
-
- status1.innerHTML = '';
- status1.appendChild(statusDropdown);
-
- function updateDropdownColor(dropdown) {
-  const selectedValue = dropdown.value;
-  dropdown.style.color = selectedValue === 'open' ? 'green' : 'red';
-  dropdown.style.backgroundColor = selectedValue === 'open' ? 'rgb(231, 252, 229)' : 'rgb(247, 220, 220)';
-}
-
-
- 
-// Function to update ticket status in the backend
-async function updateTicketStatus(ticketId, newStatus) {
-  const token = localStorage.getItem('authToken');
-  try {
-    const response = await fetch(`api/tickets/${ticketId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'auth-token': token
-      },
-      body: JSON.stringify({ status: newStatus })
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update ticket status');
-      
+    function updateDropdownColor(dropdown) {
+      const selectedValue = dropdown.value;
+      dropdown.style.color = selectedValue === 'open' ? 'green' : 'red';
+      dropdown.style.backgroundColor = selectedValue === 'open' ? 'rgb(231, 252, 229)' : 'rgb(247, 220, 220)';
     }
 
-    return await response.json();
-  } catch (error) {
-    throw new Error('Error updating ticket status');
-  }
-}
 
-document.getElementById('ticket-footer').innerHTML = `
+
+    // Function to update ticket status in the backend
+    async function updateTicketStatus(ticketId, newStatus) {
+      const token = localStorage.getItem('authToken');
+      try {
+        const response = await fetch(`api/tickets/${ticketId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'auth-token': token
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update ticket status');
+
+        }
+
+        return await response.json();
+      } catch (error) {
+        throw new Error('Error updating ticket status');
+      }
+    }
+
+    document.getElementById('ticket-footer').innerHTML = `
         TICKET ${ticket.ticket_id} IS UP TO DATE `;
 
-        const ticketId = ticket.id; 
+    const ticketId = ticket.id;
 
 
-// CHANGE ASSIGNED TO
-  if (currentRole === 'admin') { 
-   const assignedSelect = document.getElementById("ticket-assigned-select");
-   assignedSelect.style.display = "block";
-   document.getElementById("ticket-assigned-display").style.display = "none";
+    // CHANGE ASSIGNED TO
+    if (currentRole === 'admin') {
+      const assignedSelect = document.getElementById("ticket-assigned-select");
+      assignedSelect.style.display = "block";
+      document.getElementById("ticket-assigned-display").style.display = "none";
 
-  assignedSelect.addEventListener('change', () => {
-    updateAssignedTo(ticketId);
-   });
-
-
-  } else {
-   document.getElementById("ticket-assigned-display").textContent = ticket.assigned_to || "Unassigned";
-  }
-
-  function updateAssignedTo(ticketId) {
-    const assignedTo = document.getElementById('ticket-assigned-select').value;
-    const token = localStorage.getItem('authToken');
-  
-    fetch(`/api/tickets/assign/${ticketId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'auth-token': token
-      },
-      body: JSON.stringify({ assigned_to: assignedTo })
-    })
-    .then(response => response.ok ? console.log('Ticket assigned' ) : response.json().then(result => alert(result.msg)))
-    .catch(error => console.error('Error updating assigned_to:', error));
-  }
+      assignedSelect.addEventListener('change', () => {
+        updateAssignedTo(ticketId);
+      });
 
 
- 
-  modal.style.display = "flex";
+    } else {
+      document.getElementById("ticket-assigned-display").textContent = ticket.assigned_to || "Unassigned";
+    }
 
-  closeButton.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
+    function updateAssignedTo(ticketId) {
+      const assignedTo = document.getElementById('ticket-assigned-select').value;
+      const token = localStorage.getItem('authToken');
 
-  window.onclick = function (event) {
-    if (event.target == modal) {
+      fetch(`/api/tickets/assign/${ticketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token
+        },
+        body: JSON.stringify({ assigned_to: assignedTo })
+      })
+        .then(response => response.ok ? console.log('Ticket assigned') : response.json().then(result => alert(result.msg)))
+        .catch(error => console.error('Error updating assigned_to:', error));
+    }
+
+
+
+    modal.style.display = "flex";
+
+    closeButton.addEventListener('click', () => {
       modal.style.display = 'none';
-    }
-  };
+    });
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
 
 
-// Load ticket activity
-const token = localStorage.getItem('authToken');
-fetch(`/api/responses/${ticketId}/responses`, {
-  method: 'GET',
-  headers: {
-    'auth-token': token,
-    'Content-Type': 'application/json'
-  }
-})
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(responses => {
-    console.log('Received responses:', responses); 
+    // Load ticket activity
+    const token = localStorage.getItem('authToken');
+    fetch(`/api/responses/${ticketId}/responses`, {
+      method: 'GET',
+      headers: {
+        'auth-token': token,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(responses => {
+        console.log('Received responses:', responses);
 
-    if (!Array.isArray(responses)) {
-      throw new TypeError('Expected an array of responses.');
-    }
+        if (!Array.isArray(responses)) {
+          throw new TypeError('Expected an array of responses.');
+        }
 
-    const ticketActivity = document.querySelector('.ticket-activity');
-    ticketActivity.innerHTML = ''; 
+        const ticketActivity = document.querySelector('.ticket-activity');
+        ticketActivity.innerHTML = '';
 
-    // Format date 
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = String(date.getFullYear()).slice(-2); 
-      const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      return `${day}/${month}/${year} ${time}`;
-    }
-    
+        // Format date 
+        function formatDate(dateString) {
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = String(date.getFullYear()).slice(-2);
+          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // ticket activity (creation)
-    ticketActivity.innerHTML += `
+          return `${day}/${month}/${year} ${time}`;
+        }
+
+
+        // ticket activity (creation)
+        ticketActivity.innerHTML += `
     <div class="activity-item" id="ticket-created">
       <div class="activity-header">
         <span class="activity-label">Ticket Created - </span>
@@ -652,13 +652,13 @@ fetch(`/api/responses/${ticketId}/responses`, {
       <div class="activity-content">${ticket.description}</div>
     </div>`;
 
-    // Add all the responses to the message box
-    responses.forEach(response => {
-      const sender = response.sender === 'admin' ? '<span style=" color: green; font-size: 17px;">Admin Response</span>' : '<span style="color: #1E90FF; font-size: 17px;">User Message</span>' ;
-      const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
-      const dateTime = formatDate(response.created_at);
-    
-      ticketActivity.innerHTML += `
+        // Add all the responses to the message box
+        responses.forEach(response => {
+          const sender = response.sender === 'admin' ? '<span style=" color: green; font-size: 17px;">Admin Response</span>' : '<span style="color: #1E90FF; font-size: 17px;">User Message</span>';
+          const responseClass = response.sender === 'admin' ? 'admin-response' : 'user-response';
+          const dateTime = formatDate(response.created_at);
+
+          ticketActivity.innerHTML += `
       <div class="activity-item">
         <div class="activity-header ${responseClass}"  > <p>${sender} - <span style="font-size: 11px; color: grey;">${dateTime}</span></p> </div>
         <div class="activity-content">
@@ -666,15 +666,15 @@ fetch(`/api/responses/${ticketId}/responses`, {
         </div>
       </div>
       <p></p>`;
-    });
+        });
 
-  })
-  
-  .catch(err => {
-    console.error('Failed to fetch responses:', err); 
-  });
-  
-}
+      })
+
+      .catch(err => {
+        console.error('Failed to fetch responses:', err);
+      });
+
+  }
 
 }
 
@@ -730,7 +730,7 @@ customersForm.addEventListener('submit', async (event) => {
       localStorage.setItem('customerId', result.customer.id);
       document.getElementById("customers-section").style.display = "block";
       document.getElementById("create-customer-section").style.display = "none";
-      fetchCustomers(); 
+      fetchCustomers();
     } else {
       const result = await response.json();
       alert('Customer registration failed: ' + result.msg);
@@ -747,7 +747,7 @@ async function fetchCustomers() {
       headers: { 'auth-token': localStorage.getItem('authToken') },
     });
     if (!response.ok) throw new Error("Failed to fetch customers");
-    
+
     const customers = await response.json();
     customersTableBody.innerHTML = '';
 
@@ -766,7 +766,7 @@ function appendCustomerRow(customer) {
   const row = document.createElement("tr");
 
   row.id = `customer-row-${customer.id}`;
-  
+
   row.dataset.customerId = customer.customer_id;
 
   row.innerHTML = `
@@ -777,45 +777,45 @@ function appendCustomerRow(customer) {
     <td>${customer.ticket_count}</td>
   `;
 
-  row.addEventListener('click', function () {
+  row.addEventListener('click', function() {
     openCustomerModal(customer);
   });
 
   customersTableBody.appendChild(row);
 
 
-function openCustomerModal(customer) {
-  const closeButton = document.getElementById('close-modal1');
-  const modal = document.getElementById("customer-modal");
+  function openCustomerModal(customer) {
+    const closeButton = document.getElementById('close-modal1');
+    const modal = document.getElementById("customer-modal");
 
-  console.log(customer);
- 
-  // Set ticket information
-  document.getElementById("customer-id-name").textContent = `#${customer.id} --- ${customer.name}`;
-  document.getElementById("customer-email").textContent = customer.email;
-  document.getElementById("customer-project").textContent = customer.project;
-  document.getElementById("customer-phone").textContent = customer.phone_number;
-  document.getElementById("customer-country").textContent = customer.country;
-  document.getElementById("customer-city").textContent = customer.city;
+    console.log(customer);
 
-  modal.style.display = "flex";
-  deleteBtn.dataset.customerId = customer.id;
+    // Set ticket information
+    document.getElementById("customer-id-name").textContent = `#${customer.id} --- ${customer.name}`;
+    document.getElementById("customer-email").textContent = customer.email;
+    document.getElementById("customer-project").textContent = customer.project;
+    document.getElementById("customer-phone").textContent = customer.phone_number;
+    document.getElementById("customer-country").textContent = customer.country;
+    document.getElementById("customer-city").textContent = customer.city;
 
-  closeButton.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
+    modal.style.display = "flex";
+    deleteBtn.dataset.customerId = customer.id;
 
-  window.onclick = function (event) {
-    if (event.target == modal) {
+    closeButton.addEventListener('click', () => {
       modal.style.display = 'none';
-    }
-  };
+    });
 
-  document.getElementById('customer-footer').innerHTML = `
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    document.getElementById('customer-footer').innerHTML = `
         CUSTOMER ${customer.name} IS UP TO DATE `;
 
 
-};
+  };
 }
 
 fetchCustomers();
@@ -830,51 +830,51 @@ function addDeleteButtonListener(deleteCustomersBtn) {
       alert("Customer ID is missing.");
       return;
     }
- 
-   const token = localStorage.getItem('authToken');
-   if (!token) {
-    alert("No token provided. Please log in.");
-    return;
-   }
- 
-   const confirmDelete = confirm("Are you sure you want to delete this customer?");
-   if (!confirmDelete) return;
- 
-   try {
-    const response = await fetch(`/api/customers/${customerId}`, { // Adjust endpoint if needed
-     method: 'DELETE',
-     headers: {
-      'auth-token': token
-     }
-    });
- 
-    if (response.ok) {
-     alert('Customer deleted successfully.');
- 
-     // Close the modal if it's open
-     document.getElementById('customer-modal').style.display = 'none';
- 
-     // Remove the row from the DOM
-     const rowToDelete = document.getElementById(`customer-row-${customerId}`);
-     if (rowToDelete) {
-      rowToDelete.remove();
-      console.log(`Row for customer ID ${customerId} removed successfully.`);
-     } else {
-      console.error(`Row for customer ID ${customerId} not found.`);
-     }
-    } else {
-     const result = await response.json();
-     alert('Failed to delete customer: ' + result.msg);
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert("No token provided. Please log in.");
+      return;
     }
-   } catch (error) {
-    console.error('Error deleting customer:', error);
-    alert('An error occurred while deleting the customer.');
-   }
+
+    const confirmDelete = confirm("Are you sure you want to delete this customer?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`/api/customers/${customerId}`, { // Adjust endpoint if needed
+        method: 'DELETE',
+        headers: {
+          'auth-token': token
+        }
+      });
+
+      if (response.ok) {
+        alert('Customer deleted successfully.');
+
+        // Close the modal if it's open
+        document.getElementById('customer-modal').style.display = 'none';
+
+        // Remove the row from the DOM
+        const rowToDelete = document.getElementById(`customer-row-${customerId}`);
+        if (rowToDelete) {
+          rowToDelete.remove();
+          console.log(`Row for customer ID ${customerId} removed successfully.`);
+        } else {
+          console.error(`Row for customer ID ${customerId} not found.`);
+        }
+      } else {
+        const result = await response.json();
+        alert('Failed to delete customer: ' + result.msg);
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      alert('An error occurred while deleting the customer.');
+    }
   });
- }
- 
- // ... (your existing code) ...
- 
+}
+
+// ... (your existing code) ...
+
 
 
 
