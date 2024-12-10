@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   
     const sidebarLinks = document.querySelectorAll(".menu-btn");
-    const role = await getUserRole();
+    const role = await getUserRoleFromToken();
     displayMenuBasedOnRole(role);
     const pages = document.querySelectorAll('.page');
     
@@ -20,22 +20,12 @@ document.addEventListener("DOMContentLoaded", async () => {
    
         // Get target ID from the data-target attribute
         const target = e.currentTarget.getAttribute('data-target');
-        // const newUrl = `/home.html/${target}`; //new URL
-        // window.history.pushState({}, '', newUrl);
 
-        //   // Handle URL changes
-        // window.addEventListener('popstate', (event) => {
-        //   const path = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
-        //   displaySection(path); 
-        // });
-   
-        // Find the active page and remove the 'active' class
-        const activePage = document.querySelector('.page.active');
+           const activePage = document.querySelector('.page.active');
         if (activePage) {
           activePage.classList.remove('active');
         }
    
-        // Add active class to the target page
         const targetPage = document.getElementById(target);
         targetPage.classList.add('active');
    
@@ -54,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
    
-    // Initially display the dashboard for admin, and tickets for other users
+    // Initially display the dashboard for admin, and tickets table for other users
     if (role === 'admin') {
       document.getElementById('dashboard').style.display = 'block';
       document.querySelector('.menu-btn[data-target="dashboard"]').classList.add('active'); 
@@ -70,19 +60,20 @@ let currentRole = null;
 
    
 ///GET USER ROLE
-async function getUserRole() {
+function getUserRoleFromToken() {
+  const token = localStorage.getItem('authToken');
+  if (!token) return null;
+
   try {
-   const response = await fetch('/api/customers/get-role', {
-    headers: { 'auth-token': localStorage.getItem('authToken') },
-   });
-   if (!response.ok) throw new Error("Failed to fetch user role");
-   const data = await response.json();
-   currentRole = data.role; // Assign the role to the global variable
-   return data.role;
+    const payload = JSON.parse(atob(token.split('.')[1])); 
+    currentRole = payload.role; 
+
+    return payload.role;
   } catch (error) {
-   console.error('Error fetching user role:', error);
+    console.error('Error decoding token:', error);
+    return null;
   }
- }
+}
    
    function displayMenuBasedOnRole(role) {
      if (role === 'admin') {
@@ -298,11 +289,12 @@ ticketForm.addEventListener('submit', async (event) => {
   const type = document.getElementById('type').value;
   const department = document.getElementById('department').value;
   const description = document.getElementById('description').value;
-
+ 
   const token = localStorage.getItem('authToken');
 
   if (!token) {
     alert("No token provided. Please log in.");
+    window.location.href = '/index.html';
     return;
   }
 
@@ -790,7 +782,7 @@ function openCustomerModal(customer) {
 
   console.log(customer);
  
-  // Set ticket information
+  // Set customer information
   document.getElementById("customer-id-name").textContent = `#${customer.id} --- ${customer.name}`;
   document.getElementById("customer-email").textContent = customer.email;
   document.getElementById("customer-project").textContent = customer.project;
@@ -872,8 +864,7 @@ function addDeleteButtonListener(deleteCustomersBtn) {
    }
   });
  }
- 
- // ... (your existing code) ...
+
  
 
 
